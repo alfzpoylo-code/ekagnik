@@ -13,8 +13,8 @@
 
     <style>
         :root {
-            --primary-color: #4A0E17; /* Αυτοκρατορικό Βυσσινί/Πορφυρό */
-            --accent-gold: #D4AF37;   /* Αυτοκρατορικό Χρυσό */
+            --primary-color: #4A0E17; /* Βυσσινί/Πορφυρό */
+            --accent-gold: #D4AF37;   /* Χρυσό */
             --gold-light: #F3E5AB;
             --bg-color: #F8F5EE;      /* Απαλή περγαμηνής */
             --card-bg: #FFFFFF;
@@ -120,7 +120,7 @@
             gap: 8px;
         }
 
-        /* Imperial Highlight Card */
+        /* Highlight Card */
         .card-highlight {
             background: #FFFDF7;
             border: 2px solid var(--accent-gold);
@@ -300,9 +300,9 @@
                 <p id="today-desc" style="font-size: 12px; color: #555;"></p>
             </div>
 
-            <!-- Όλες οι Μεγάλες Εορτές της Ενορίας -->
+            <!-- Μεγάλες Εορτές -->
             <div class="card card-highlight">
-                <h3>👑 Αυτοκρατορικό Εορτολόγιο & Εορτές Ναού</h3>
+                <h3>☦️ Εκκλησιαστικό Εορτολόγιο & Εορτές Ναού</h3>
                 <div class="feast-badge"><span>☦️ Αγίου Νικολάου (Πολιούχος)</span> <span style="font-size:11px;">6 Δεκ. & 20 Μαΐου</span></div>
                 <div class="feast-badge"><span>☦️ Αγίου Αθανασίου & 1ης Μαΐου</span> <span style="font-size:11px;">18 Ιαν. & 2 Μαΐου</span></div>
                 <div class="feast-badge"><span>☦️ Προφήτη Ηλία</span> <span style="font-size:11px;">20 Ιουλίου</span></div>
@@ -316,7 +316,7 @@
 
             <!-- Γρήγορη Εικόνα Ταμείου -->
             <div class="card">
-                <h3>⚖️ Ταμείο Ενορίας (Cloud Firebase)</h3>
+                <h3>⚖️ Ταμείο Ενορίας</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
                     <span style="font-size: 14px;">Διαθέσιμο Υπόλοιπο:</span>
                     <strong id="home-balance" style="font-size: 20px; color: var(--primary-color);">0.00 €</strong>
@@ -333,10 +333,10 @@
                         <label>Κατηγορία</label>
                         <select id="exp-category" required>
                             <option value="ΔΕΗ">⚡ ΔΕΗ</option>
-                            <option value="ΣΤΕΦΑΝΙΑ">💐 ΣΤΕΦΑΝΙΑ</option>
-                            <option value="ΕΙΚΟΝΕΣ">🖼️ ΕΙΚΟΝΕΣ</option>
-                            <option value="ΕΞΩΚΛΗΣΙΑ">⛪ ΕΞΩΚΛΗΣΙΑ</option>
-                            <option value="ΑΛΛΟ">➕ ΑΛΛΟ</option>
+                            <option value="Στεφάνια">💐 Στεφάνια</option>
+                            <option value="Κεριά">🕯️ Κεριά</option>
+                            <option value="Γιορτές">✝️ Γιορτές</option>
+                            <option value="Άλλος">➕ Άλλος</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -374,10 +374,9 @@
                         <label>Κατηγορία</label>
                         <select id="inc-category" required>
                             <option value="Παγκάρι">🕯️ Παγκάρι</option>
-                            <option value="Δωρεές">🎁 Δωρεές / Εισφορές</option>
-                            <option value="Ιεροπραξίες">💍 Ιεροπραξίες (Γάμοι/Βαπτίσεις/Μνημόσυνα)</option>
-                            <option value="Διάθεση Ειδών">✝️ Διάθεση Ειδών (Κεριά/Εικόνες)</option>
-                            <option value="ΑΛΛΟ">➕ ΑΛΛΟ</option>
+                            <option value="Δίσκος">🪙 Δίσκος</option>
+                            <option value="Ιεροπραξίες">💍 Ιεροπραξίες (Μνημόσυνα/Γάμοι/Βαφτίσεις)</option>
+                            <option value="Άλλος">➕ Άλλος</option>
                         </select>
                     </div>
                     <div class="form-group">
