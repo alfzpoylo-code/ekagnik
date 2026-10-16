@@ -145,7 +145,7 @@ input[type=date]{min-height:48px}
 /* Floating glass nav */
 nav{position:fixed;bottom:calc(12px + var(--sab));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),460px);z-index:100;
   border-radius:34px;padding:7px;display:none;justify-content:space-between;gap:2px}
-nav button{flex:1;min-height:56px;background:none;border:none;border-radius:27px;color:var(--muted);font-size:10.5px;font-weight:700;cursor:pointer;
+nav button{flex:1;min-width:0;min-height:56px;background:none;border:none;border-radius:27px;color:var(--muted);font-size:10.5px;font-weight:700;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.25s}
 nav button .icon{font-size:22px;filter:grayscale(1);opacity:.75;transition:.25s}
 nav button.active{color:var(--gold-l);background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.1));
@@ -168,6 +168,46 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
 #toast{position:fixed;left:50%;top:calc(72px + var(--sat));transform:translate(-50%,-20px);opacity:0;pointer-events:none;z-index:400;
   padding:12px 22px;border-radius:24px;font-weight:700;font-size:14px;transition:.35s;max-width:90%;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+
+
+.month-h{display:flex;justify-content:space-between;align-items:baseline;padding:11px 16px;font-weight:800;font-size:13px;color:var(--gold-l);background:rgba(255,255,255,.07);border-bottom:1px solid var(--edge-soft)}
+.month-h small{font-weight:700;color:var(--muted)}
+details.year{border-bottom:1px solid var(--edge-soft)}
+details.year>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:15px 16px;font-weight:800;font-size:14px;min-height:52px}
+details.year>summary::-webkit-details-marker{display:none}
+details.year>summary::before{content:'▸';margin-right:8px;color:var(--gold);transition:.2s}
+details.year[open]>summary::before{transform:rotate(90deg)}
+details.year>summary span{flex:1}
+details.year>summary small{color:var(--muted);font-weight:700}
+.seg{display:flex;padding:5px;border-radius:26px;gap:4px;margin:4px 0 12px}
+.seg button{flex:1;min-height:42px;border:none;border-radius:21px;background:none;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;transition:.2s}
+.seg button.on{color:#2a0910;background:linear-gradient(180deg,#f7e9b8,#e3c464);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
+.pnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pnav b{flex:1;text-align:center;font-size:15px;color:var(--gold-l)}
+.pnav .btn-icon{font-size:18px;color:var(--gold-l)}
+.pnav .btn-icon:disabled{opacity:.3}
+.overall{text-align:center;font-size:12.5px;color:var(--muted);margin-top:-2px}
+.prayer{font-family:'Noto Serif',serif;font-size:16.5px;line-height:1.8;color:var(--gold-l);white-space:pre-line}
+.btn.danger{background:linear-gradient(180deg,#ff9b9b,#e05555);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+#dlg{display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;padding:20px;background:rgba(10,2,4,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#dlg.open{display:flex;animation:fade .2s}
+.dlg-box{width:100%;max-width:360px;border-radius:30px;padding:24px 20px 18px;text-align:center;background:rgba(74,14,23,.6)}
+.dlg-box p{font-size:15px;line-height:1.55;margin-bottom:18px}
+.dlg-box .btn{margin-top:8px}
+#print-area{display:none}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff!important;color:#000!important;padding:0!important}
+  body>*:not(#print-area){display:none!important}
+  #print-area{display:block;font-family:'Manrope',Arial,sans-serif;font-size:11px;color:#000}
+  #print-area h1{font-size:18px;margin-bottom:2px}#print-area h2{font-size:14px;margin:16px 0 4px}
+  #print-area table{width:100%;border-collapse:collapse}
+  #print-area th,#print-area td{padding:4px 6px;border-bottom:1px solid #ccc;text-align:left;vertical-align:top}
+  #print-area .r{text-align:right;white-space:nowrap}
+  #print-area tr.m td{background:#f1e7cc;font-weight:700}
+  #print-area tr.t td{font-weight:800;border-top:2px solid #000}
+  #print-area thead{display:table-header-group}#print-area tr{page-break-inside:avoid}
+}
 
 /* Tablet & desktop */
 @media (min-width:768px){
@@ -216,7 +256,7 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
     <div class="card glass">
       <div class="post-head">
         <div class="avatar"><span>☦</span></div>
-        <div><b>Σημερινό Εορτολόγιο</b><small id="today-date-text"></small></div>
+        <div><b>Ποιος γιορτάζει σήμερα</b><small id="today-date-text"></small></div>
       </div>
       <div class="post-hero">
         <div class="cross">☦</div>
@@ -227,10 +267,10 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
 
     <div class="card glass">
       <div class="post-head">
-        <div class="avatar"><span>⚖</span></div>
-        <div><b>Ταμείο Ενορίας</b><small>Διαθέσιμο υπόλοιπο</small></div>
+        <div class="avatar"><span>🙏</span></div>
+        <div><b>Προσευχή της Ημέρας</b><small id="prayer-title"></small></div>
       </div>
-      <div class="post-body"><div class="big" id="home-balance">0.00 €</div></div>
+      <div class="post-body"><p class="prayer" id="prayer-text"></p></div>
     </div>
 
     <div class="full">
@@ -297,14 +337,44 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
       <h2>Εκκλησία Αγίου Νικολάου Σκεπαστής</h2>
       <p>Συγκεντρωτικά οικονομικά της ενορίας</p>
     </div>
+    <div class="seg glass">
+      <button data-m="week" onclick="setMode('week')">Εβδομάδα</button>
+      <button data-m="month" onclick="setMode('month')">Μήνας</button>
+      <button data-m="year" onclick="setMode('year')">Έτος</button>
+    </div>
+    <div class="pnav">
+      <button class="btn-icon" onclick="shift(-1)" aria-label="Προηγούμενο">‹</button>
+      <b id="per-label"></b>
+      <button class="btn-icon" id="per-next" onclick="shift(1)" aria-label="Επόμενο">›</button>
+    </div>
     <div class="pills">
       <div class="pill glass"><b id="total-income-val" style="color:var(--green)">0.00 €</b><small>Έσοδα</small></div>
       <div class="pill glass"><b id="total-expense-val" style="color:var(--red)">0.00 €</b><small>Έξοδα</small></div>
       <div class="pill glass"><b id="net-balance-val">0.00 €</b><small>Υπόλοιπο</small></div>
     </div>
+    <p class="overall" id="overall"></p>
     <div class="sec-title">Ανά Κατηγορία</div>
     <div class="feed glass" id="category-breakdown"></div>
   </div>
+
+  <!-- ΡΥΘΜΙΣΕΙΣ -->
+  <div id="tab-settings" class="tab-content">
+    <div class="sec-title">Ρυθμίσεις</div>
+    <div class="form-card glass">
+      <h3>📄 Αναφορά PDF</h3>
+      <p class="hint" style="margin:0 0 14px">Όλα τα έσοδα και τα έξοδα αναλυτικά, ανά μήνα. Στο παράθυρο που ανοίγει επιλέξτε «Αποθήκευση ως PDF».</p>
+      <button class="btn" onclick="printAll()">Λήψη όλων σε PDF</button>
+    </div>
+    <div class="form-card glass">
+      <h3>👤 Νέος λογαριασμός</h3>
+      <div class="form-group"><label>Email</label><input type="email" id="new-email" placeholder="onoma@email.com" autocomplete="off"></div>
+      <div class="form-group"><label>Κωδικός (τουλάχιστον 6 χαρακτήρες)</label><input type="password" id="new-pass" placeholder="Κωδικός" autocomplete="new-password"></div>
+      <button class="btn" onclick="createAccount()">Δημιουργία λογαριασμού</button>
+    </div>
+    <div class="sec-title">Διαγραμμένα <small>Μένουν 7 ημέρες</small></div>
+    <div class="feed glass" id="trash-list"></div>
+  </div>
+
 </div>
 
 <nav class="glass" id="main-nav">
@@ -312,7 +382,10 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
   <button onclick="switchTab('incomes')" id="nav-incomes"><span class="icon">📈</span>Έσοδα</button>
   <button onclick="switchTab('expenses')" id="nav-expenses"><span class="icon">📉</span>Έξοδα</button>
   <button onclick="switchTab('analysis')" id="nav-analysis"><span class="icon">📊</span>Ταμείο</button>
+  <button onclick="switchTab('settings')" id="nav-settings"><span class="icon">⚙️</span>Ρυθμίσεις</button>
 </nav>
+
+<div id="dlg"><div class="dlg-box glass"><p id="dlg-msg"></p><button class="btn danger" id="dlg-ok">Διαγραφή</button><button class="btn ghost" id="dlg-no">Ακύρωση</button></div></div>
 
 <div id="toast" class="glass"></div>
 
@@ -324,6 +397,8 @@ nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
   <h2 id="sv-title"></h2>
   <p id="sv-date"></p>
 </div>
+
+<div id="print-area"></div>
 
 <script>
 const firebaseConfig = {
@@ -411,7 +486,7 @@ function login(){
   const pass = $('login-password').value;
   auth.signInWithEmailAndPassword(email, pass).catch(error=>{ alert('Σφάλμα σύνδεσης: ' + error.message); });
 }
-function logout(){ if(auth && confirm("Θέλετε να αποσυνδεθείτε;")) auth.signOut(); }
+function logout(){ if(auth) ask('Θέλετε να αποσυνδεθείτε;','Αποσύνδεση').then(ok=>{ if(ok) auth.signOut(); }); }
 
 function switchTab(t){
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
@@ -421,14 +496,12 @@ function switchTab(t){
   window.scrollTo({top:0});
 }
 
-fetch('https://eortologio.net/api/today').then(r=>r.json()).then(data=>{
-  $('today-saint').innerText = data.names ? data.names.join(', ') : 'Εορτή Ημέρας';
-  $('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
-}).catch(()=>{ $('today-saint').innerText = "Μνήμη Αγίων Ημέρας"; });
+
 
 let listening = false;
 function loadDataFromCloud(){
   if(listening) return; listening = true;
+  rtdb.ref('trash').on('value', s=>{ trash=[]; const d=s.val(); if(d) for(let id in d){ if(Date.now()-d[id].deletedAt>WEEK) rtdb.ref('trash/'+id).remove(); else trash.push({id,...d[id]}); } renderTrash(); });
   rtdb.ref('incomes').on('value', s=>{ incomes=[]; const d=s.val(); if(d) for(let id in d) incomes.push({id,...d[id]}); updateUI(); });
   rtdb.ref('expenses').on('value', s=>{ expenses=[]; const d=s.val(); if(d) for(let id in d) expenses.push({id,...d[id]}); updateUI(); });
 }
@@ -471,7 +544,7 @@ function cancelExpEdit(){
   $('exp-submit-btn').innerText = "Καταχώρηση Εξόδου";
   $('exp-cancel-btn').style.display = "none";
 }
-function deleteExpense(id){ if(confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έξοδο;")) rtdb.ref('expenses/'+id).remove(); }
+function deleteExpense(id){ deleteItem('expenses',id); }
 
 // ---- ΕΣΟΔΑ ----
 $('income-form').addEventListener('submit', function(e){
@@ -509,7 +582,7 @@ function cancelIncEdit(){
   $('inc-submit-btn').innerText = "Καταχώρηση Εσόδου";
   $('inc-cancel-btn').style.display = "none";
 }
-function deleteIncome(id){ if(confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έσοδο;")) rtdb.ref('incomes/'+id).remove(); }
+function deleteIncome(id){ deleteItem('incomes',id); }
 
 // ---- UI ----
 function row(it, sign, color, editFn, delFn, extra){
@@ -520,33 +593,170 @@ function row(it, sign, color, editFn, delFn, extra){
     <div class="acts"><button class="btn-icon" onclick="${editFn}('${it.id}')" title="Επεξεργασία">✏️</button><button class="btn-icon" onclick="${delFn}('${it.id}')" title="Διαγραφή">🗑️</button></div>
   </div>`;
 }
+const WEEK=7*24*3600*1000;
+let trash=[];
+const MONTHS=['Ιανουάριος','Φεβρουάριος','Μάρτιος','Απρίλιος','Μάιος','Ιούνιος','Ιούλιος','Αύγουστος','Σεπτέμβριος','Οκτώβριος','Νοέμβριος','Δεκέμβριος'];
+const PRAYERS=[
+{t:'Πάτερ ημών',x:'Πάτερ ημών ο εν τοις ουρανοίς, αγιασθήτω το όνομά σου, ελθέτω η βασιλεία σου, γενηθήτω το θέλημά σου, ως εν ουρανώ και επί της γης. Τον άρτον ημών τον επιούσιον δος ημίν σήμερον· και άφες ημίν τα οφειλήματα ημών, ως και ημείς αφίεμεν τοις οφειλέταις ημών· και μη εισενέγκης ημάς εις πειρασμόν, αλλά ρύσαι ημάς από του πονηρού.'},
+{t:'Βασιλεύ ουράνιε',x:'Βασιλεύ ουράνιε, Παράκλητε, το Πνεύμα της αληθείας, ο πανταχού παρών και τα πάντα πληρών, ο θησαυρός των αγαθών και ζωής χορηγός, έλθε και σκήνωσον εν ημίν, και καθάρισον ημάς από πάσης κηλίδος, και σώσον, Αγαθέ, τας ψυχάς ημών.'},
+{t:'Τρισάγιον',x:'Άγιος ο Θεός, Άγιος Ισχυρός, Άγιος Αθάνατος, ελέησον ημάς.\n\nΔόξα Πατρί και Υιώ και Αγίω Πνεύματι, και νυν και αεί και εις τους αιώνας των αιώνων. Αμήν.\n\nΠαναγία Τριάς, ελέησον ημάς· Κύριε, ιλάσθητι ταις αμαρτίαις ημών· Δέσποτα, συγχώρησον τας ανομίας ημών· Άγιε, επίσκεψαι και ίασαι τας ασθενείας ημών, ένεκεν του ονόματός σου.'},
+{t:'Ευχή του Ιησού',x:'Κύριε Ιησού Χριστέ, Υιέ του Θεού, ελέησόν με τον αμαρτωλόν.'},
+{t:'Θεοτόκε Παρθένε',x:'Θεοτόκε Παρθένε, χαίρε, κεχαριτωμένη Μαρία, ο Κύριος μετά σου· ευλογημένη συ εν γυναιξί, και ευλογημένος ο καρπός της κοιλίας σου, ότι Σωτήρα έτεκες των ψυχών ημών.'},
+{t:'Άξιόν εστιν',x:'Άξιόν εστιν ως αληθώς μακαρίζειν σε την Θεοτόκον, την αειμακάριστον και παναμώμητον και μητέρα του Θεού ημών. Την τιμιωτέραν των Χερουβείμ και ενδοξοτέραν ασυγκρίτως των Σεραφείμ, την αδιαφθόρως Θεόν Λόγον τεκούσαν, την όντως Θεοτόκον, σε μεγαλύνομεν.'},
+{t:'Ψαλμός 22',x:'Κύριος ποιμαίνει με, και ουδέν με υστερήσει· εις τόπον χλόης, εκεί με κατεσκήνωσεν, επί ύδατος αναπαύσεως εξέθρεψέ με. Την ψυχήν μου επέστρεψεν, ώδήγησέ με επί τρίβους δικαιοσύνης ένεκεν του ονόματος αυτού.'},
+{t:'Ψαλμός 26',x:'Κύριος φωτισμός μου και σωτήρ μου, τίνα φοβηθήσομαι; Κύριος υπερασπιστής της ζωής μου, από τίνος δειλιάσω;'},
+{t:'Ψαλμός 90',x:'Ο κατοικών εν βοηθεία του Υψίστου, εν σκέπη του Θεού του ουρανού αυλισθήσεται. Ερεί τω Κυρίω· Αντιλήπτωρ μου ει και καταφυγή μου, ο Θεός μου, και ελπιώ επ᾽ αυτόν.'},
+{t:'Απολυτίκιο Αγίου Νικολάου',x:'Κανόνα πίστεως και εικόνα πραότητος, εγκρατείας διδάσκαλον, ανέδειξέ σε τη ποίμνη σου η των πραγμάτων αλήθεια· δια τούτο εκτήσω ταις ταπεινώσεσι τα υψηλά, τη πτωχεία τα πλούσια· Πάτερ ιεράρχα Νικόλαε, πρέσβευε Χριστώ τω Θεώ, σωθήναι τας ψυχάς ημών.'},
+{t:'Απολυτίκιο της Αναστάσεως',x:'Χριστός ανέστη εκ νεκρών, θανάτω θάνατον πατήσας, και τοις εν τοις μνήμασι ζωήν χαρισάμενος.'},
+{t:'Απολυτίκιο του Τιμίου Σταυρού',x:'Σώσον, Κύριε, τον λαόν σου, και ευλόγησον την κληρονομίαν σου, νίκας τοις βασιλεύσι κατά βαρβάρων δωρούμενος, και το σόν φυλάττων δια του Σταυρού σου πολίτευμα.'},
+{t:'Την πάσαν ελπίδα μου',x:'Την πάσαν ελπίδα μου εις σε ανατίθημι, Μήτερ του Θεού, φύλαξόν με υπό την σκέπην σου.'},
+{t:'Ψαλμός 30',x:'Επί σοί, Κύριε, ήλπισα, μη καταισχυνθείην εις τον αιώνα· εν τη δικαιοσύνη σου ρύσαι με και εξελού με.'},
+{t:'Ευλογητός ο Θεός',x:'Ευλογητός ο Θεός ημών πάντοτε, νυν και αεί και εις τους αιώνας των αιώνων. Αμήν.'},
+{t:'Ευχή πριν το φαγητό',x:'Οι οφθαλμοί πάντων εις σε ελπίζουσι, Κύριε, και συ δίδως την τροφήν αυτών εν ευκαιρία· ανοίγεις συ την χείρα σου και εμπιπλάς παν ζώον ευδοκίας.'}
+];
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const fmtD=d=>(d||'').split('-').reverse().join('/');
+const byDate=(a,b)=>(b.date||'').localeCompare(a.date||'');
+
+/* Daily refresh: saint + prayer */
+let dayKey='';
+function dailyRefresh(){
+  const n=new Date(), k=ymd(n); if(k===dayKey) return; dayKey=k;
+  $('today-date-text').innerText=n.toLocaleDateString('el-GR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const doy=Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(n.getFullYear(),0,0))/864e5);
+  const p=PRAYERS[doy%PRAYERS.length]; $('prayer-title').innerText=p.t; $('prayer-text').innerText=p.x;
+  $('today-saint').innerText='Φόρτωση...'; $('today-desc').innerText='';
+  fetch('https://eortologio.net/api/today').then(r=>r.json()).then(data=>{
+    if(dayKey!==k) return;
+    $('today-saint').innerText = data.names && data.names.length ? data.names.join(', ') : 'Εορτή Ημέρας';
+    $('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
+  }).catch(()=>{ $('today-saint').innerText='Μνήμη Αγίων Ημέρας'; $('today-desc').innerText='Δεν φορτώθηκε το εορτολόγιο. Ελέγξτε τη σύνδεση.'; });
+}
+dailyRefresh(); setInterval(dailyRefresh,60000); document.addEventListener('visibilitychange',dailyRefresh);
+
+/* Confirm dialog */
+function ask(msg,okText){
+  return new Promise(res=>{
+    $('dlg-msg').textContent=msg; $('dlg-ok').textContent=okText||'Διαγραφή'; $('dlg').classList.add('open');
+    const done=v=>{ $('dlg').classList.remove('open'); res(v); };
+    $('dlg-ok').onclick=()=>done(true); $('dlg-no').onclick=()=>done(false);
+  });
+}
+
+/* Soft delete -> trash (7 days) */
+function deleteItem(type,id){
+  const it=(type==='incomes'?incomes:expenses).find(x=>x.id===id); if(!it) return;
+  ask('Είστε σίγουροι ότι θέλετε να διαγράψετε '+(type==='incomes'?'αυτό το έσοδο':'αυτό το έξοδο')+' ('+it.category+', '+eur(it.amount)+'); Θα μείνει στα Διαγραμμένα για 7 ημέρες.').then(ok=>{
+    if(!ok) return;
+    const data=Object.assign({},it); delete data.id;
+    rtdb.ref('trash/'+id).set({type:type,data:data,deletedAt:Date.now()})
+      .then(()=>rtdb.ref(type+'/'+id).remove()).then(()=>toast('Μεταφέρθηκε στα Διαγραμμένα'))
+      .catch(e=>alert('Σφάλμα: '+e.message));
+  });
+}
+function restoreItem(id){
+  const t=trash.find(x=>x.id===id); if(!t) return;
+  rtdb.ref(t.type+'/'+id).set(t.data).then(()=>rtdb.ref('trash/'+id).remove()).then(()=>toast('Επαναφέρθηκε!')).catch(e=>alert('Σφάλμα: '+e.message));
+}
+function renderTrash(){
+  const el=$('trash-list'); if(!el) return;
+  el.innerHTML = trash.length===0 ? '<div class="empty">Δεν υπάρχουν διαγραμμένα.</div>' :
+    trash.slice().sort((a,b)=>b.deletedAt-a.deletedAt).map(t=>{
+      const left=Math.max(1,Math.ceil((t.deletedAt+WEEK-Date.now())/86400000));
+      const d=t.data||{};
+      return '<div class="item"><div class="ic"><span>'+(CAT_ICON[d.category]||'➕')+'</span></div><div class="mid"><b>'+esc(d.category)+' • '+eur(d.amount||0)+'</b><small>'+(t.type==='incomes'?'Έσοδο':'Έξοδο')+' • '+fmtD(d.date)+' • απομένουν '+left+' ημ.</small></div><button class="btn-icon" onclick="restoreItem(\''+t.id+'\')" title="Αναίρεση">↩️</button></div>';
+    }).join('');
+}
+
+/* Accounts */
+function createAccount(){
+  const e=$('new-email').value.trim(), p=$('new-pass').value;
+  if(!e||p.length<6){ toast('Συμπληρώστε email και κωδικό (τουλάχιστον 6 χαρακτήρες)'); return; }
+  let app2; try{ app2=firebase.app('secondary'); }catch(_){ app2=firebase.initializeApp(firebaseConfig,'secondary'); }
+  const a2=app2.auth();
+  a2.createUserWithEmailAndPassword(e,p).then(()=>{ a2.signOut(); $('new-email').value=''; $('new-pass').value=''; toast('Ο λογαριασμός δημιουργήθηκε!'); })
+    .catch(err=>alert('Σφάλμα: '+err.message));
+}
+
+/* PDF report (print dialog -> Save as PDF) */
+function repTable(items,title,isExp){
+  const cols=isExp?4:3, g={};
+  items.slice().sort(byDate).forEach(i=>{ const k=(i.date||'').slice(0,7); (g[k]=g[k]||[]).push(i); });
+  let h='<h2>'+title+'</h2><table><thead><tr><th>Ημερομηνία</th><th>Κατηγορία</th>'+(isExp?'<th>Απόδειξη</th>':'')+'<th>Σχόλια</th><th class="r">Ποσό</th></tr></thead><tbody>';
+  Object.keys(g).sort().reverse().forEach(k=>{
+    const l=g[k], sum=l.reduce((a,i)=>a+i.amount,0);
+    h+='<tr class="m"><td colspan="'+cols+'">'+(MONTHS[+k.slice(5,7)-1]||'')+' '+k.slice(0,4)+'</td><td class="r">'+eur(sum)+'</td></tr>';
+    l.forEach(i=>{ h+='<tr><td>'+fmtD(i.date)+'</td><td>'+esc(i.category)+'</td>'+(isExp?'<td>'+esc(i.receipt||'')+'</td>':'')+'<td>'+esc(i.comment||'')+'</td><td class="r">'+eur(i.amount)+'</td></tr>'; });
+  });
+  return h+'<tr class="t"><td colspan="'+cols+'">Σύνολο</td><td class="r">'+eur(items.reduce((a,i)=>a+i.amount,0))+'</td></tr></tbody></table>';
+}
+function printAll(){
+  const ti=incomes.reduce((s,i)=>s+i.amount,0), te=expenses.reduce((s,i)=>s+i.amount,0);
+  $('print-area').innerHTML='<h1>Εκκλησία Αγίου Νικολάου Σκεπαστής</h1><div>Οικονομική αναφορά • Έκδοση: '+new Date().toLocaleDateString('el-GR')+'</div>'+
+    '<h2>Σύνοψη</h2><table><tbody><tr><td>Σύνολο εσόδων</td><td class="r">'+eur(ti)+'</td></tr><tr><td>Σύνολο εξόδων</td><td class="r">'+eur(te)+'</td></tr><tr class="t"><td>Υπόλοιπο ταμείου</td><td class="r">'+eur(ti-te)+'</td></tr></tbody></table>'+
+    repTable(incomes,'Έσοδα',false)+repTable(expenses,'Έξοδα',true);
+  window.print();
+}
+
+/* Period view (Ταμείο) */
+let per={mode:'month',off:0};
+function setMode(m){ per.mode=m; per.off=0; updateUI(); }
+function shift(n){ per.off+=n; updateUI(); }
+function perRange(){
+  const n=new Date(); let s,e,label;
+  if(per.mode==='week'){
+    const d=new Date(n.getFullYear(),n.getMonth(),n.getDate()), day=(d.getDay()+6)%7;
+    s=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day+per.off*7); e=new Date(s.getFullYear(),s.getMonth(),s.getDate()+6);
+    label=s.toLocaleDateString('el-GR',{day:'numeric',month:'short'})+' – '+e.toLocaleDateString('el-GR',{day:'numeric',month:'short',year:'numeric'});
+  } else if(per.mode==='month'){
+    s=new Date(n.getFullYear(),n.getMonth()+per.off,1); e=new Date(s.getFullYear(),s.getMonth()+1,0); label=MONTHS[s.getMonth()]+' '+s.getFullYear();
+  } else {
+    s=new Date(n.getFullYear()+per.off,0,1); e=new Date(s.getFullYear(),11,31); label=String(s.getFullYear());
+  }
+  return {a:ymd(s),b:ymd(e),label:label};
+}
+
+function grouped(items,rowFn){
+  const ys={};
+  items.slice().sort(byDate).forEach(it=>{ const d=it.date||'0000-00', y=d.slice(0,4), m=d.slice(5,7); ys[y]=ys[y]||{}; (ys[y][m]=ys[y][m]||[]).push(it); });
+  const cy=String(new Date().getFullYear());
+  const block=y=>Object.keys(ys[y]).sort().reverse().map(m=>{
+    const l=ys[y][m], sum=l.reduce((a,i)=>a+i.amount,0);
+    return '<div class="month-h"><span>'+(MONTHS[+m-1]||'')+' '+y+'</span><small>'+eur(sum)+'</small></div>'+l.map(rowFn).join('');
+  }).join('');
+  return Object.keys(ys).sort().reverse().map(y=>{
+    if(y>=cy) return block(y);
+    const tot=Object.keys(ys[y]).reduce((a,m)=>a+ys[y][m].reduce((x,i)=>x+i.amount,0),0);
+    return '<details class="year"><summary><span>Προηγούμενο έτος '+y+'</span><small>'+eur(tot)+'</small></summary>'+block(y)+'</details>';
+  }).join('');
+}
+
 function updateUI(){
-  const byDate = (a,b)=> (b.date||'').localeCompare(a.date||'');
   $('expense-list').innerHTML = expenses.length===0 ? '<div class="empty">Δεν υπάρχουν έξοδα ακόμα.<br>Καταχωρήστε το πρώτο από τη φόρμα.</div>' :
-    expenses.slice().sort(byDate).map(ex=>row(ex,'-','var(--red)','editExpense','deleteExpense', ex.receipt?' • Απ. '+ex.receipt:'')).join('');
+    grouped(expenses,ex=>row(ex,'-','var(--red)','editExpense','deleteExpense', ex.receipt?' • Απ. '+ex.receipt:''));
   $('income-list').innerHTML = incomes.length===0 ? '<div class="empty">Δεν υπάρχουν έσοδα ακόμα.<br>Καταχωρήστε το πρώτο από τη φόρμα.</div>' :
-    incomes.slice().sort(byDate).map(inc=>row(inc,'+','var(--green)','editIncome','deleteIncome','')).join('');
+    grouped(incomes,inc=>row(inc,'+','var(--green)','editIncome','deleteIncome',''));
 
-  const totalInc = incomes.reduce((s,i)=>s+i.amount,0);
-  const totalExp = expenses.reduce((s,i)=>s+i.amount,0);
-  const balance = totalInc - totalExp;
-  $('inc-total').innerText = 'Σύνολο ' + eur(totalInc);
-  $('exp-total').innerText = 'Σύνολο ' + eur(totalExp);
-  $('total-income-val').innerText = eur(totalInc);
-  $('total-expense-val').innerText = eur(totalExp);
-  const net = $('net-balance-val');
-  net.innerText = eur(balance);
-  net.style.color = balance>=0 ? 'var(--green)' : 'var(--red)';
-  $('home-balance').innerText = eur(balance);
+  const allI=incomes.reduce((s,i)=>s+i.amount,0), allE=expenses.reduce((s,i)=>s+i.amount,0);
+  $('inc-total').innerText='Σύνολο '+eur(allI);
+  $('exp-total').innerText='Σύνολο '+eur(allE);
+  $('overall').innerText='Συνολικό υπόλοιπο ταμείου: '+eur(allI-allE);
 
-  const cat = {};
-  incomes.forEach(i=>cat[i.category]=(cat[i.category]||0)+i.amount);
-  expenses.forEach(e=>cat[e.category]=(cat[e.category]||0)-e.amount);
-  const keys = Object.keys(cat);
-  const max = Math.max(1, ...keys.map(k=>Math.abs(cat[k])));
-  $('category-breakdown').innerHTML = keys.length===0 ? '<div class="empty">Δεν υπάρχουν δεδομένα</div>' :
-    keys.map(c=>{const col = cat[c]>=0?'var(--green)':'var(--red)';
-      return `<div class="item"><div class="ic"><span>${CAT_ICON[c]||'➕'}</span></div><div class="mid"><b>${esc(c)}</b><div class="bar"><i style="width:${Math.abs(cat[c])/max*100}%;background:${col}"></i></div></div><div class="amt" style="color:${col}">${eur(cat[c])}</div></div>`;}).join('');
+  const r=perRange();
+  const fi=incomes.filter(i=>i.date>=r.a&&i.date<=r.b), fe=expenses.filter(i=>i.date>=r.a&&i.date<=r.b);
+  const ti=fi.reduce((s,i)=>s+i.amount,0), te=fe.reduce((s,i)=>s+i.amount,0), bal=ti-te;
+  $('per-label').innerText=r.label; $('per-next').disabled=per.off>=0;
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===per.mode));
+  $('total-income-val').innerText=eur(ti); $('total-expense-val').innerText=eur(te);
+  const net=$('net-balance-val'); net.innerText=eur(bal); net.style.color=bal>=0?'var(--green)':'var(--red)';
+
+  const cat={};
+  fi.forEach(i=>cat[i.category]=(cat[i.category]||0)+i.amount);
+  fe.forEach(e=>cat[e.category]=(cat[e.category]||0)-e.amount);
+  const keys=Object.keys(cat), max=Math.max(1,...keys.map(k=>Math.abs(cat[k])));
+  $('category-breakdown').innerHTML = keys.length===0 ? '<div class="empty">Δεν υπάρχουν κινήσεις σε αυτή την περίοδο.</div>' :
+    keys.map(c=>{const col=cat[c]>=0?'var(--green)':'var(--red)';
+      return '<div class="item"><div class="ic"><span>'+(CAT_ICON[c]||'➕')+'</span></div><div class="mid"><b>'+esc(c)+'</b><div class="bar"><i style="width:'+Math.abs(cat[c])/max*100+'%;background:'+col+'"></i></div></div><div class="amt" style="color:'+col+'">'+eur(cat[c])+'</div></div>';}).join('');
 }
 </script>
 </body>
