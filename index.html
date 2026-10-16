@@ -237,6 +237,26 @@
             border-bottom: none;
         }
 
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .btn-icon:hover {
+            background-color: #f0f0f0;
+        }
+
         .summary-box {
             display: grid;
             grid-template-columns: 1fr;
@@ -327,8 +347,9 @@
         <!-- ΚΑΡΤΕΛΑ 2: ΕΞΟΔΑ -->
         <div id="tab-expenses" class="tab-content">
             <div class="card">
-                <h3>📉 Καταχώρηση Εξόδου</h3>
+                <h3 id="exp-form-title">📉 Καταχώρηση Εξόδου</h3>
                 <form id="expense-form">
+                    <input type="hidden" id="exp-edit-id" value="">
                     <div class="form-group">
                         <label>Κατηγορία</label>
                         <select id="exp-category" required>
@@ -355,7 +376,8 @@
                         <label>Σχόλια (Προαιρετικό)</label>
                         <textarea id="exp-comment" rows="2" placeholder="Λεπτομέρειες..."></textarea>
                     </div>
-                    <button type="submit" class="btn-submit">Καταχώρηση Εξόδου</button>
+                    <button type="submit" id="exp-submit-btn" class="btn-submit">Καταχώρηση Εξόδου</button>
+                    <button type="button" id="exp-cancel-btn" class="btn-submit" style="background:#777; margin-top:5px; display:none;" onclick="cancelExpEdit()">Ακύρωση Επεξεργασίας</button>
                 </form>
             </div>
 
@@ -368,8 +390,9 @@
         <!-- ΚΑΡΤΕΛΑ 3: ΕΣΟΔΑ -->
         <div id="tab-incomes" class="tab-content">
             <div class="card">
-                <h3>📈 Καταχώρηση Εσόδου</h3>
+                <h3 id="inc-form-title">📈 Καταχώρηση Εσόδου</h3>
                 <form id="income-form">
+                    <input type="hidden" id="inc-edit-id" value="">
                     <div class="form-group">
                         <label>Κατηγορία</label>
                         <select id="inc-category" required>
@@ -391,7 +414,8 @@
                         <label>Σχόλια / Δωρητής (Προαιρετικό)</label>
                         <textarea id="inc-comment" rows="2" placeholder="Ονοματεπώνυμο ή σημείωση..."></textarea>
                     </div>
-                    <button type="submit" class="btn-submit">Καταχώρηση Εσόδου</button>
+                    <button type="submit" id="inc-submit-btn" class="btn-submit">Καταχώρηση Εσόδου</button>
+                    <button type="button" id="inc-cancel-btn" class="btn-submit" style="background:#777; margin-top:5px; display:none;" onclick="cancelIncEdit()">Ακύρωση Επεξεργασίας</button>
                 </form>
             </div>
 
@@ -531,8 +555,10 @@
             });
         }
 
+        // --- ΚΑΤΑΧΩΡΗΣΗ / ΕΠΕΞΕΡΓΑΣΙΑ ΕΞΟΔΟΥ ---
         document.getElementById('expense-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const editId = document.getElementById('exp-edit-id').value;
             const item = {
                 category: document.getElementById('exp-category').value,
                 amount: parseFloat(document.getElementById('exp-amount').value),
@@ -540,41 +566,146 @@
                 receipt: document.getElementById('exp-receipt').value,
                 comment: document.getElementById('exp-comment').value
             };
-            rtdb.ref('expenses').push(item).then(() => {
-                this.reset();
-                document.getElementById('exp-date').valueAsDate = new Date();
-                alert('Το έξοδο αποθηκεύτηκε στο cloud!');
-            });
+
+            if (editId) {
+                rtdb.ref('expenses/' + editId).set(item).then(() => {
+                    cancelExpEdit();
+                    alert('Το έξοδο ενημερώθηκε!');
+                });
+            } else {
+                rtdb.ref('expenses').push(item).then(() => {
+                    this.reset();
+                    document.getElementById('exp-date').valueAsDate = new Date();
+                    alert('Το έξοδο αποθηκεύτηκε στο cloud!');
+                });
+            }
         });
 
+        function editExpense(id) {
+            const ex = expenses.find(item => item.id === id);
+            if (!ex) return;
+            document.getElementById('exp-edit-id').value = ex.id;
+            document.getElementById('exp-category').value = ex.category;
+            document.getElementById('exp-amount').value = ex.amount;
+            document.getElementById('exp-date').value = ex.date;
+            document.getElementById('exp-receipt').value = ex.receipt || '';
+            document.getElementById('exp-comment').value = ex.comment || '';
+
+            document.getElementById('exp-form-title').innerText = "✏️ Επεξεργασία Εξόδου";
+            document.getElementById('exp-submit-btn').innerText = "Αποθήκευση Αλλαγών";
+            document.getElementById('exp-cancel-btn').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelExpEdit() {
+            document.getElementById('exp-edit-id').value = "";
+            document.getElementById('expense-form').reset();
+            document.getElementById('exp-date').valueAsDate = new Date();
+            document.getElementById('exp-form-title').innerText = "📉 Καταχώρηση Εξόδου";
+            document.getElementById('exp-submit-btn').innerText = "Καταχώρηση Εξόδου";
+            document.getElementById('exp-cancel-btn').style.display = "none";
+        }
+
+        function deleteExpense(id) {
+            if (confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έξοδο;")) {
+                rtdb.ref('expenses/' + id).remove();
+            }
+        }
+
+        // --- ΚΑΤΑΧΩΡΗΣΗ / ΕΠΕΞΕΡΓΑΣΙΑ ΕΣΟΔΟΥ ---
         document.getElementById('income-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const editId = document.getElementById('inc-edit-id').value;
             const item = {
                 category: document.getElementById('inc-category').value,
                 amount: parseFloat(document.getElementById('inc-amount').value),
                 date: document.getElementById('inc-date').value,
                 comment: document.getElementById('inc-comment').value
             };
-            rtdb.ref('incomes').push(item).then(() => {
-                this.reset();
-                document.getElementById('inc-date').valueAsDate = new Date();
-                alert('Το έσοδο αποθηκεύτηκε στο cloud!');
-            });
+
+            if (editId) {
+                rtdb.ref('incomes/' + editId).set(item).then(() => {
+                    cancelIncEdit();
+                    alert('Το έσοδο ενημερώθηκε!');
+                });
+            } else {
+                rtdb.ref('incomes').push(item).then(() => {
+                    this.reset();
+                    document.getElementById('inc-date').valueAsDate = new Date();
+                    alert('Το έσοδο αποθηκεύτηκε στο cloud!');
+                });
+            }
         });
 
+        function editIncome(id) {
+            const inc = incomes.find(item => item.id === id);
+            if (!inc) return;
+            document.getElementById('inc-edit-id').value = inc.id;
+            document.getElementById('inc-category').value = inc.category;
+            document.getElementById('inc-amount').value = inc.amount;
+            document.getElementById('inc-date').value = inc.date;
+            document.getElementById('inc-comment').value = inc.comment || '';
+
+            document.getElementById('inc-form-title').innerText = "✏️ Επεξεργασία Εσόδου";
+            document.getElementById('inc-submit-btn').innerText = "Αποθήκευση Αλλαγών";
+            document.getElementById('inc-cancel-btn').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelIncEdit() {
+            document.getElementById('inc-edit-id').value = "";
+            document.getElementById('income-form').reset();
+            document.getElementById('inc-date').valueAsDate = new Date();
+            document.getElementById('inc-form-title').innerText = "📈 Καταχώρηση Εσόδου";
+            document.getElementById('inc-submit-btn').innerText = "Καταχώρηση Εσόδου";
+            document.getElementById('inc-cancel-btn').style.display = "none";
+        }
+
+        function deleteIncome(id) {
+            if (confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έσοδο;")) {
+                rtdb.ref('incomes/' + id).remove();
+            }
+        }
+
+        // --- ENHMEPΩΣΗ UI ---
         function updateUI() {
+            // Λίστα Εξόδων
             const expList = document.getElementById('expense-list');
             expList.innerHTML = expenses.length === 0 ? '<li>Δεν υπάρχουν έξοδα</li>' : '';
             expenses.slice().reverse().forEach(ex => {
-                expList.innerHTML += `<li><div><b>[${ex.category}]</b> ${ex.amount.toFixed(2)}€<br><small style="color:#777">${ex.date} ${ex.receipt ? '• Απ. '+ex.receipt : ''}</small></div><span style="color:var(--red); font-weight:bold;">-${ex.amount.toFixed(2)}€</span></li>`;
+                expList.innerHTML += `
+                    <li>
+                        <div>
+                            <b>[${ex.category}]</b> ${ex.amount.toFixed(2)}€<br>
+                            <small style="color:#777">${ex.date} ${ex.receipt ? '• Απ. '+ex.receipt : ''} ${ex.comment ? '• '+ex.comment : ''}</small>
+                        </div>
+                        <div class="item-actions">
+                            <span style="color:var(--red); font-weight:bold;">-${ex.amount.toFixed(2)}€</span>
+                            <button class="btn-icon" onclick="editExpense('${ex.id}')" title="Επεξεργασία">✏️</button>
+                            <button class="btn-icon" onclick="deleteExpense('${ex.id}')" title="Διαγραφή">🗑️</button>
+                        </div>
+                    </li>`;
             });
 
+            // Λίστα Εσόδων
             const incList = document.getElementById('income-list');
             incList.innerHTML = incomes.length === 0 ? '<li>Δεν υπάρχουν έσοδα</li>' : '';
             incomes.slice().reverse().forEach(inc => {
-                incList.innerHTML += `<li><div><b>[${inc.category}]</b> ${inc.amount.toFixed(2)}€<br><small style="color:#777">${inc.date} ${inc.comment ? '• '+inc.comment : ''}</small></div><span style="color:var(--green); font-weight:bold;">+${inc.amount.toFixed(2)}€</span></li>`;
+                incList.innerHTML += `
+                    <li>
+                        <div>
+                            <b>[${inc.category}]</b> ${inc.amount.toFixed(2)}€<br>
+                            <small style="color:#777">${inc.date} ${inc.comment ? '• '+inc.comment : ''}</small>
+                        </div>
+                        <div class="item-actions">
+                            <span style="color:var(--green); font-weight:bold;">+${inc.amount.toFixed(2)}€</span>
+                            <button class="btn-icon" onclick="editIncome('${inc.id}')" title="Επεξεργασία">✏️</button>
+                            <button class="btn-icon" onclick="deleteIncome('${inc.id}')" title="Διαγραφή">🗑️</button>
+                        </div>
+                    </li>`;
             });
 
+            // Σύνολα & Υπόλοιπα
             const totalInc = incomes.reduce((sum, item) => sum + item.amount, 0);
             const totalExp = expenses.reduce((sum, item) => sum + item.amount, 0);
             const balance = totalInc - totalExp;
@@ -587,6 +718,7 @@
             netEl.style.color = balance >= 0 ? 'var(--green)' : 'var(--red)';
             document.getElementById('home-balance').innerText = balance.toFixed(2) + ' €';
 
+            // Αναλυτικά ανά Κατηγορία
             let breakdownHTML = '<ul class="item-list">';
             let catTotals = {};
             incomes.forEach(i => catTotals[i.category] = (catTotals[i.category] || 0) + i.amount);
