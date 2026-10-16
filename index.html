@@ -180,7 +180,7 @@ details.year[open]>summary::before{transform:rotate(90deg)}
 details.year>summary span{flex:1}
 details.year>summary small{color:var(--muted);font-weight:700}
 .seg{display:flex;padding:5px;border-radius:26px;gap:4px;margin:4px 0 12px}
-.seg button{flex:1;min-height:42px;border:none;border-radius:21px;background:none;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;transition:.2s}
+.seg button{flex:1;min-width:0;padding:0 2px;min-height:42px;border:none;border-radius:21px;background:none;color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;transition:.2s}
 .seg button.on{color:#2a0910;background:linear-gradient(180deg,#f7e9b8,#e3c464);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
 .pnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .pnav b{flex:1;text-align:center;font-size:15px;color:var(--gold-l)}
@@ -341,9 +341,10 @@ details.year>summary small{color:var(--muted);font-weight:700}
       <button data-m="week" onclick="setMode('week')">Εβδομάδα</button>
       <button data-m="month" onclick="setMode('month')">Μήνας</button>
       <button data-m="year" onclick="setMode('year')">Έτος</button>
+      <button data-m="all" onclick="setMode('all')">Σύνολο</button>
     </div>
     <div class="pnav">
-      <button class="btn-icon" onclick="shift(-1)" aria-label="Προηγούμενο">‹</button>
+      <button class="btn-icon" id="per-prev" onclick="shift(-1)" aria-label="Προηγούμενο">‹</button>
       <b id="per-label"></b>
       <button class="btn-icon" id="per-next" onclick="shift(1)" aria-label="Επόμενο">›</button>
     </div>
@@ -618,6 +619,37 @@ const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+Stri
 const fmtD=d=>(d||'').split('-').reverse().join('/');
 const byDate=(a,b)=>(b.date||'').localeCompare(a.date||'');
 
+/* Εορτολόγιο (ενσωματωμένο, δεν χρειάζεται internet) */
+const SAINTS={
+'01-01':'Αγίου Βασιλείου|Βασίλειος, Βασίλης, Βασιλική, Βασιλεία','01-02':'Αγίου Σεραφείμ του Σαρώφ|Σεραφείμ, Σεραφεία','01-06':'Θεοφάνεια|Φώτης, Φωτεινή, Θεοφάνης, Θεοφανία','01-07':'Αγίου Ιωάννου του Προδρόμου|Ιωάννης, Γιάννης, Ιωάννα, Γιάννα','01-11':'Οσίου Θεοδοσίου|Θεοδόσιος, Θεοδοσία','01-12':'Αγίας Τατιανής|Τατιάνα','01-17':'Οσίου Αντωνίου|Αντώνης, Αντώνιος, Αντωνία','01-18':'Αγίων Αθανασίου και Κυρίλλου|Αθανάσιος, Θανάσης, Κύριλλος','01-20':'Οσίου Ευθυμίου|Ευθύμιος, Θύμιος','01-22':'Αγίου Τιμοθέου|Τιμόθεος','01-24':'Οσίας Ξένης|Ξένη, Ξένια','01-25':'Αγίου Γρηγορίου του Θεολόγου|Γρηγόριος, Γρηγορία','01-30':'Των Τριών Ιεραρχών|Βασίλειος, Γρηγόριος, Ιωάννης, Χρυσόστομος','01-31':'Αγίων Αναργύρων Κύρου και Ιωάννου|Κύρος, Ιωάννης',
+'02-01':'Αγίου Τρύφωνος|Τρύφων','02-02':'Υπαπαντή του Κυρίου|Συμεών','02-03':'Αγίου Συμεών του Θεοδόχου|Συμεών, Άννα','02-05':'Αγίας Αγάθης|Αγάθη, Αγαθή','02-10':'Αγίου Χαραλάμπους|Χαράλαμπος, Χαρά, Χαρούλα','02-11':'Αγίου Βλασίου|Βλάσιος, Βλάσης','02-23':'Αγίου Πολυκάρπου|Πολύκαρπος','02-25':'Αγίου Ταρασίου|Τάρασιος',
+'03-09':'Των Αγίων Σαράντα Μαρτύρων|Σαράντος','03-25':'Ευαγγελισμός της Θεοτόκου|Ευαγγελία, Ευάγγελος, Βαγγέλης, Βάγια','03-26':'Σύναξη Αρχαγγέλου Γαβριήλ|Γαβριήλ, Γαβριέλα',
+'04-25':'Αγίου Μάρκου του Ευαγγελιστή|Μάρκος, Μαρκέλλα',
+'05-02':'Αγίου Αθανασίου|Αθανάσιος','05-05':'Αγίας Ειρήνης|Ειρήνη, Ρένα','05-08':'Αγίου Ιωάννου του Θεολόγου|Ιωάννης, Γιάννης','05-09':'Προφήτου Ησαΐου|Ησαΐας','05-12':'Αγίων Επιφανίου και Γερμανού|Επιφάνιος, Γερμανός','05-13':'Αγίας Γλυκερίας|Γλυκερία','05-21':'Αγίων Κωνσταντίνου και Ελένης|Κωνσταντίνος, Κώστας, Κωνσταντίνα, Ελένη, Λένα','05-24':'Οσίου Συμεών|Συμεών',
+'06-11':'Αγίων Βαρθολομαίου και Βαρνάβα|Βαρθολομαίος, Βαρνάβας','06-24':'Γέννηση Ιωάννου του Προδρόμου|Ιωάννης, Γιάννης, Ιωάννα','06-29':'Αγίων Αποστόλων Πέτρου και Παύλου|Πέτρος, Παύλος, Πάνος, Πέτρα, Παυλίνα','06-30':'Σύναξη των Αγίων Δώδεκα Αποστόλων|Απόστολος, Αποστόλης',
+'07-01':'Αγίων Αναργύρων Κοσμά και Δαμιανού|Κοσμάς, Δαμιανός','07-07':'Αγίας Κυριακής|Κυριακή, Κυριάκος','07-11':'Αγίας Ευφημίας|Ευφημία','07-17':'Αγίας Μαρίνας|Μαρίνα, Μαρίνος','07-20':'Προφήτου Ηλία|Ηλίας, Ηλιάνα','07-22':'Αγίας Μαρίας Μαγδαληνής|Μαγδαληνή, Μαρία','07-24':'Αγίας Χριστίνας|Χριστίνα','07-25':'Κοίμηση Αγίας Άννας|Άννα, Αννούλα','07-26':'Αγίας Παρασκευής|Παρασκευή, Εύη, Βιβή','07-27':'Αγίου Παντελεήμονος|Παντελής, Παντελεήμων, Πάνος',
+'08-06':'Μεταμόρφωση του Σωτήρος|Σωτήρης, Σωτηρία, Σώτος','08-15':'Κοίμηση της Θεοτόκου|Μαρία, Παναγιώτης, Παναγιώτα, Δέσποινα, Δέσπω','08-27':'Αγίου Φανουρίου|Φανούριος, Φανούρης, Φανή','08-29':'Αποτομή της Κεφαλής του Ιωάννου του Προδρόμου|Ιωάννης, Γιάννης',
+'09-01':'Οσίου Συμεών του Στυλίτου|Συμεών','09-08':'Γέννηση της Θεοτόκου|Μαρία, Δέσποινα, Παναγιώτα','09-14':'Ύψωση του Τιμίου Σταυρού|Σταύρος, Σταυρούλα, Σταυριανός','09-17':'Αγίας Σοφίας και των θυγατέρων της|Σοφία, Πίστη, Ελπίδα, Αγάπη','09-20':'Αγίου Ευσταθίου|Ευστάθιος, Στάθης','09-24':'Αγίας Θέκλας|Θέκλα','09-26':'Αγίου Ιωάννου του Θεολόγου|Ιωάννης','09-30':'Αγίου Γρηγορίου|Γρηγόριος',
+'10-04':'Αγίου Ιεροθέου|Ιερόθεος','10-06':'Αγίου Θωμά|Θωμάς','10-07':'Αγίων Σεργίου και Βάκχου|Σέργιος','10-18':'Αγίου Λουκά του Ευαγγελιστή|Λουκάς, Λουκία, Λουκιανός','10-26':'Αγίου Δημητρίου|Δημήτρης, Δημήτριος, Δήμητρα, Μίμης','10-27':'Αγίου Νέστορος|Νέστορας','10-29':'Αγίας Αναστασίας|Αναστασία',
+'11-01':'Αγίων Αναργύρων Κοσμά και Δαμιανού|Κοσμάς, Δαμιανός','11-08':'Σύναξη των Ταξιαρχών Μιχαήλ και Γαβριήλ|Μιχάλης, Μιχαήλ, Γαβριήλ, Άγγελος, Αγγελική, Ταξιάρχης','11-09':'Αγίου Νεκταρίου|Νεκτάριος, Νεκταρία','11-11':'Αγίων Μηνά, Βίκτωρος και Βικεντίου|Μηνάς, Βίκτωρας','11-13':'Αγίου Ιωάννου του Χρυσοστόμου|Ιωάννης, Χρυσόστομος','11-14':'Αγίου Φιλίππου|Φίλιππος','11-21':'Εισόδια της Θεοτόκου|Μαρία, Παναγιώτα, Δέσποινα','11-25':'Αγίας Αικατερίνης|Κατερίνα, Αικατερίνη','11-26':'Οσίου Στυλιανού|Στέλιος, Στυλιανός, Στέλλα','11-30':'Αγίου Ανδρέα του Πρωτοκλήτου|Ανδρέας, Αντρέας, Ανδριανή',
+'12-04':'Αγίας Βαρβάρας και Οσίου Ιωάννου του Δαμασκηνού|Βαρβάρα, Βάρβαρα, Ιωάννης','12-05':'Οσίου Σάββα|Σάββας','12-06':'Αγίου Νικολάου|Νικόλαος, Νίκος, Νικολέτα, Νικολίτσα','12-07':'Αγίου Αμβροσίου|Αμβρόσιος','12-10':'Αγίων Μηνά και Ερμογένους|Μηνάς, Ερμογένης','12-12':'Αγίου Σπυρίδωνος|Σπύρος, Σπυρίδων, Σπυριδούλα','12-13':'Αγίων Ευστρατίου, Ευγενίου, Ορέστου και Λουκίας|Ευστράτιος, Ορέστης, Λουκία, Ευγένιος','12-15':'Αγίου Ελευθερίου|Ελευθέριος, Ελευθερία, Λευτέρης','12-22':'Αγίας Αναστασίας|Αναστασία','12-24':'Αγίας Ευγενίας|Ευγενία','12-25':'Χριστούγεννα|Χρήστος, Χριστίνα, Χρυσούλα, Χρύσα','12-26':'Σύναξη της Υπεραγίας Θεοτόκου|','12-27':'Αγίου Στεφάνου|Στέφανος, Στεφανία','12-31':'Αγίας Μελάνης|Μελίνα'
+};
+const MOVE={'-7':'Κυριακή των Βαΐων|Βάιος, Βάια, Βαΐα','-2':'Μεγάλη Παρασκευή|','-1':'Μεγάλο Σάββατο|','0':'Κυριακή του Πάσχα|Αναστάσιος, Αναστασία, Λάμπρος, Λαμπρινή','1':'Δευτέρα της Διακαινησίμου|','5':'Ζωοδόχου Πηγής|Ζωή, Ζωοδόχος, Πηγή','7':'Κυριακή του Θωμά|Θωμάς','39':'Ανάληψη του Σωτήρος|','49':'Κυριακή της Πεντηκοστής|','50':'Αγίου Πνεύματος|','56':'Αγίων Πάντων|'};
+function orthEaster(y){const a=y%4,b=y%7,c=y%19,d=(19*c+15)%30,e=(2*a+4*b-d+34)%7,m=Math.floor((d+e+114)/31),dd=(d+e+114)%31+1;return new Date(y,m-1,dd+13);}
+function showSaint(n){
+  const y=n.getFullYear(), pad=x=>String(x).padStart(2,'0'), key=pad(n.getMonth()+1)+'-'+pad(n.getDate());
+  const E=orthEaster(y).getTime(), off=Math.round((new Date(y,n.getMonth(),n.getDate()).getTime()-E)/864e5);
+  const items=[]; if(MOVE[off]) items.push(MOVE[off]);
+  const eg=Math.round((new Date(y,3,23).getTime()-E)/864e5), geo='Αγίου Γεωργίου του Τροπαιοφόρου|Γιώργος, Γεώργιος, Γεωργία, Γιωργία';
+  if(key==='04-23'){ if(eg>7) items.push(geo); }
+  else if(SAINTS[key]) items.push(SAINTS[key]);
+  if(eg<=0 && off===1) items.push(geo); else if(eg>0 && eg<=7 && off===8) items.push(geo);
+  if(!items.length){ $('today-saint').innerText='Μνήμη Αγίων της ημέρας'; $('today-desc').innerText='Σήμερα δεν υπάρχει κάποια μεγάλη γιορτή.'; return; }
+  const names=items.map(i=>i.split('|')[1]).filter(Boolean).join(', ');
+  $('today-saint').innerText=items.map(i=>i.split('|')[0]).join(' • ');
+  $('today-desc').innerText=names?'Γιορτάζουν: '+names:'';
+}
+
 /* Daily refresh: saint + prayer */
 let dayKey='';
 function dailyRefresh(){
@@ -626,11 +658,7 @@ function dailyRefresh(){
   const doy=Math.floor((Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())-Date.UTC(n.getFullYear(),0,0))/864e5);
   const p=PRAYERS[doy%PRAYERS.length]; $('prayer-title').innerText=p.t; $('prayer-text').innerText=p.x;
   $('today-saint').innerText='Φόρτωση...'; $('today-desc').innerText='';
-  fetch('https://eortologio.net/api/today').then(r=>r.json()).then(data=>{
-    if(dayKey!==k) return;
-    $('today-saint').innerText = data.names && data.names.length ? data.names.join(', ') : 'Εορτή Ημέρας';
-    $('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
-  }).catch(()=>{ $('today-saint').innerText='Μνήμη Αγίων Ημέρας'; $('today-desc').innerText='Δεν φορτώθηκε το εορτολόγιο. Ελέγξτε τη σύνδεση.'; });
+  showSaint(n);
 }
 dailyRefresh(); setInterval(dailyRefresh,60000); document.addEventListener('visibilitychange',dailyRefresh);
 
@@ -704,6 +732,7 @@ function setMode(m){ per.mode=m; per.off=0; updateUI(); }
 function shift(n){ per.off+=n; updateUI(); }
 function perRange(){
   const n=new Date(); let s,e,label;
+  if(per.mode==='all') return {a:'0000-00-00',b:'9999-99-99',label:'Συνολικά από την αρχή'};
   if(per.mode==='week'){
     const d=new Date(n.getFullYear(),n.getMonth(),n.getDate()), day=(d.getDay()+6)%7;
     s=new Date(d.getFullYear(),d.getMonth(),d.getDate()-day+per.off*7); e=new Date(s.getFullYear(),s.getMonth(),s.getDate()+6);
@@ -745,7 +774,7 @@ function updateUI(){
   const r=perRange();
   const fi=incomes.filter(i=>i.date>=r.a&&i.date<=r.b), fe=expenses.filter(i=>i.date>=r.a&&i.date<=r.b);
   const ti=fi.reduce((s,i)=>s+i.amount,0), te=fe.reduce((s,i)=>s+i.amount,0), bal=ti-te;
-  $('per-label').innerText=r.label; $('per-next').disabled=per.off>=0;
+  $('per-label').innerText=r.label; $('per-next').disabled=per.off>=0||per.mode==='all'; $('per-prev').disabled=per.mode==='all';
   document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===per.mode));
   $('total-income-val').innerText=eur(ti); $('total-expense-val').innerText=eur(te);
   const net=$('net-balance-val'); net.innerText=eur(bal); net.style.color=bal>=0?'var(--green)':'var(--red)';
