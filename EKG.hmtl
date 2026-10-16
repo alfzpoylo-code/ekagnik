@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Εκκλησία Αγίου Νικολάου Σκεπαστής</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #581815; /* Βυζαντινό Πορφυρό */
+            --accent-gold: #C5A059;   /* Βυζαντινό Χρυσό */
+            --gold-bright: #D4AF37;
+            --bg-color: #FDFBF7;      /* Φόντο Περγαμηνής */
+            --card-bg: #FFFFFF;
+            --text-color: #2C221E;
+            --border-color: #E6DCCD;
+            --green: #2E7D32;
+            --red: #C62828;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 75px;
+        }
+
+        /* Top Header (Instagram Style) */
+        header {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--accent-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-gold);
+            object-fit: cover;
+            background-color: #fff;
+        }
+
+        header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFF;
+            line-height: 1.2;
+        }
+
+        /* Tabs Content */
+        .tab-content {
+            display: none;
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards Style */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Highlight Card for Church Special Feasts */
+        .card-highlight {
+            background: #FFFDF5;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 3px 10px rgba(197, 160, 89, 0.2);
+        }
+
+        .card-highlight h3 {
+            color: var(--primary-color);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        /* Special Feast Badge */
+        .feast-badge {
+            background-color: var(--primary-color);
+            color: var(--gold-bright);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--accent-gold);
+        }
+
+        /* Bottom Navigation (Instagram Style) */
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            border-top: 2px solid var(--accent-gold);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #E6DCCD;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Open Sans', sans-serif;
+            transition: 0.2s;
+        }
+
+        nav button.active {
+            color: var(--gold-bright);
+            font-weight: bold;
+        }
+
+        nav button span.icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        /* Forms & Inputs */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--primary-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #FFF;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: var(--gold-bright);
+            border: 1px solid var(--accent-gold);
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #40100E;
+        }
+
+        /* Lists */
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            background: #FFF;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Dashboard summary */
+        .summary-box {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: #FFF;
+            border-left: 5px solid var(--primary-color);
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-card.income { border-left-color: var(--green); }
+        .stat-card.expense { border-left-color: var(--red); }
+        .stat-card.balance { border-left-color: var(--accent-gold); }
+
+        .stat-title { font-size: 12px; color: #666; text-transform: uppercase; }
+        .stat-value { font-size: 19px; font-weight: bold; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <img src="https://www.facebook.com/share/19s8w9n1Rx/?mibextid=wwXIfr" alt="Logo" class="profile-pic" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'42\' height=\'42\'><rect width=\'42\' height=\'42\' fill=\'%23581815\'/><text x=\'50%\' y=\'55%\' fill=\'%23C5A059\' font-size=\'16\' text-anchor=\'middle\' dominant-baseline=\'middle\' font-family=\'serif\'>ΑΝ</text></svg>'">
+            <h1>Αγ. Νικόλαος Σκεπαστής</h1>
+        </div>
+        <div style="font-size: 12px; color: var(--gold-bright); font-family: 'Cinzel', serif;">Επιτροπή</div>
+    </header>
+
+    <!-- ΚΑΡΤΕΛΑ 1: ΑΡΧΙΚΗ -->
+    <div id="tab-home" class="tab-content active">
+
+        <!-- Αυτόματο Εορτολογίου Ημέρας -->
+        <div class="card" style="text-align: center; border-top: 4px solid var(--accent-gold);">
+            <span style="font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 1px;">📅 Σημερινό Εορτολόγιο</span>
+            <h2 id="today-date-text" style="font-size: 14px; color: var(--accent-gold); margin-top: 4px;"></h2>
+            <h2 id="today-saint" style="font-family: 'Cinzel', serif; color: var(--primary-color); margin: 8px 0; font-size: 18px;">Φόρτωση εορτής από το internet...</h2>
+            <p id="today-desc" style="font-size: 13px; color: #555;"></p>
+        </div>
+
+        <!-- Κεντρικές & Μεγάλες Εορτές της Ενορίας (Ξεχωριστό Πλαίσιο) -->
+        <div class="card card-highlight">
+            <h3>⭐ Κεντρικές Εορτές Ενορίας & Ναού</h3>
+            <div id="special-feasts-container">
+                <!-- Δυναμική εμφάνιση σημαντικών εορτών -->
+            </div>
+        </div>
+
+        <!-- Γρήγορη Εικόνα Ταμείου -->
+        <div class="card">
+            <h3>⚖️ Υπόλοιπο Ταμείου</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                <span style="font-size: 14px;">Διαθέσιμο Υπόλοιπο:</span>
+                <strong id="home-balance" style="font-size: 20px; color: var(--primary-color);">0.00 €</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ΚΑΡΤΕΛΑ 2: ΕΞΟΔΑ -->
+    <div id="tab-expenses" class="tab-content">
+        <div class="card">
+            <h3>📉 Καταχώρηση Εξόδου</h3>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label>Κατηγορία</label>
+                    <select id="exp-category" required>
+                        <option value="ΔΕΗ">⚡ ΔΕΗ</option>
+                        <option value="ΣΤΕΦΑΝΙΑ">💐 ΣΤΕΦΑΝΙΑ</option>
+                        <option value="ΕΙΚΟΝΕΣ">🖼️ ΕΙΚΟΝΕΣ</option>
+                        <option value="ΕΞΩΚΛΗΣΙΑ">⛪ ΕΞΩΚΛΗΣΙΑ</option>
+                        <option value="ΑΛΛΟ">➕ ΑΛΛΟ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ποσό (€)</label>
+                    <input type="number" step="0.01" id="exp-amount" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Ημερομηνία</label>
+                    <input type="date" id="exp-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Αριθμός Απόδειξης (Προαιρετικό)</label>
+                    <input type="text" id="exp-receipt" placeholder="π.χ. 1245">
+                </div>
+                <div class="form-group">
+                    <label>Σχόλια (Προαιρετικό)</label>
+                    <textarea id="exp-comment" rows="2" placeholder="Λεπτομέρειες..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Καταχώρηση Εξόδου</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>📋 Ιστορικό Εξόδων</h3>
+            <ul class="item-list" id="expense-list"></ul>
+        </div>
+    </div>
+
+    <!-- ΚΑΡΤΕΛΑ 3: ΕΣΟΔΑ -->
+    <div id="tab-incomes" class="tab-content">
+        <div class="card">
+            <h3>📈 Καταχώρηση Εσόδου</h3>
+            <form id="income-form">
+                <div class="form-group">
+                    <label>Κατηγορία</label>
+                    <select id="inc-category" required>
+                        <option value="Παγκάρι">🕯️ Παγκάρι</option>
+                        <option value="Δωρεές">🎁 Δωρεές / Εισφορές</option>
+                        <option value="Ιεροπραξίες">💍 Ιεροπραξίες (Γάμοι/Βαπτίσεις/Μνημόσυνα)</option>
+                        <option value="Διάθεση Ειδών">✝️ Διάθεση Ειδών (Κεριά/Εικόνες)</option>
+                        <option value="ΑΛΛΟ">➕ ΑΛΛΟ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ποσό (€)</label>
+                    <input type="number" step="0.01" id="inc-amount" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Ημερομηνία</label>
+                    <input type="date" id="inc-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Σχόλια / Δωρητής (Προαιρετικό)</label>
+                    <textarea id="inc-comment" rows="2" placeholder="Ονοματεπώνυμο ή σημείωση..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Καταχώρηση Εσόδου</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>📋 Ιστορικό Εσόδων</h3>
+            <ul class="item-list" id="income-list"></ul>
+        </div>
+    </div>
+
+    <!-- ΚΑΡΤΕΛΑ 4: ΑΝΑΛΥΣΗ -->
+    <div id="tab-analysis" class="tab-content">
+        <div class="summary-box">
+            <div class="stat-card income">
+                <div class="stat-title">Συνολικά Έσοδα</div>
+                <div class="stat-value" id="total-income-val" style="color: var(--green);">0.00 €</div>
+            </div>
+            <div class="stat-card expense">
+                <div class="stat-title">Συνολικά Έξοδα</div>
+                <div class="stat-value" id="total-expense-val" style="color: var(--red);">0.00 €</div>
+            </div>
+            <div class="stat-card balance">
+                <div class="stat-title">Καθαρό Υπόλοιπο (+ / -)</div>
+                <div class="stat-value" id="net-balance-val">0.00 €</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Συγκεντρωτικά ανά Κατηγορία</h3>
+            <div id="category-breakdown"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation (Instagram Style) -->
+    <nav>
+        <button onclick="switchTab('home')" class="active" id="nav-home">
+            <span class="icon">⛪</span>Αρχική
+        </button>
+        <button onclick="switchTab('incomes')" id="nav-incomes">
+            <span class="icon">📈</span>Έσοδα
+        </button>
+        <button onclick="switchTab('expenses')" id="nav-expenses">
+            <span class="icon">📉</span>Έξοδα
+        </button>
+        <button onclick="switchTab('analysis')" id="nav-analysis">
+            <span class="icon">📊</span>Ταμείο
+        </button>
+    </nav>
+
+    <script>
+        // Set Today's Date
+        const today = new Date();
+        document.getElementById('exp-date').valueAsDate = today;
+        document.getElementById('inc-date').valueAsDate = today;
+        document.getElementById('today-date-text').innerText = today.toLocaleDateString('el-GR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // Storage Data
+        let incomes = JSON.parse(localStorage.getItem('church_incomes')) || [];
+        let expenses = JSON.parse(localStorage.getItem('church_expenses')) || [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('nav-' + tabName).classList.add('active');
+            updateUI();
+        }
+
+        // Fetch Online Eortologio (Auto-update)
+        async function fetchEortologio() {
+            try {
+                const response = await fetch('https://eortologio.net/api/today');
+                if(response.ok) {
+                    const data = await response.json();
+                    document.getElementById('today-saint').innerText = data.names ? data.names.join(', ') : 'Γιορτάζουν οι Άγιοι της Ημέρας';
+                    document.getElementById('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                // Fallback online API if primary fails
+                fetch('https://mariosg.gr/eortologio-api/')
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById('today-saint').innerText = data.celebrating || "Μνήμη Αγίων της Ημέρας";
+                    })
+                    .catch(() => {
+                        document.getElementById('today-saint').innerText = "Εορτολόγιο Ημέρας";
+                        document.getElementById('today-desc').innerText = "Σύνδεση στο ίντερνετ για αυτόματη ενημέρωση.";
+                    });
+            }
+        }
+
+        // Major Feasts List
+        const specialFeasts = [
+            { name: "Αγίου Αθανασίου", date: "18 Ιανουαρίου & 2 Μαΐου (1 Μαΐου)" },
+            { name: "Αγίου Νικολάου (Πολιούχος / Ενορία)", date: "6 Δεκεμβρίου & 20 Μαΐου" },
+            { name: "Αγίων Αποστόλων", date: "30 Ιουνίου" },
+            { name: "Προφήτη Ηλία", date: "20 Ιουλίου" },
+            { name: "Αγίας Παρασκευής", date: "26 Ιουλίου" },
+            { name: "Κοίμηση της Θεοτόκου (Παναγία)", date: "15 Αυγούστου" },
+            { name: "Αγίου Ιωάννη Προδρόμου", date: "29 Αυγούστου & 7 Ιανουαρίου" },
+            { name: "Χριστούγεννα", date: "25 Δεκεμβρίου" },
+            { name: "Μεγάλη Εβδομάδα & Πάσχα", date: "Κινητή Εορτή (Άγιο Πάσχα)" }
+        ];
+
+        function renderSpecialFeasts() {
+            const container = document.getElementById('special-feasts-container');
+            container.innerHTML = '';
+            specialFeasts.forEach(f => {
+                container.innerHTML += `
+                    <div class="feast-badge">
+                        <span>☦️ ${f.name}</span>
+                        <span style="font-size: 11px; opacity: 0.9;">${f.date}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Add Expense
+        document.getElementById('expense-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            expenses.push({
+                id: Date.now(),
+                category: document.getElementById('exp-category').value,
+                amount: parseFloat(document.getElementById('exp-amount').value),
+                date: document.getElementById('exp-date').value,
+                receipt: document.getElementById('exp-receipt').value,
+                comment: document.getElementById('exp-comment').value
+            });
+            localStorage.setItem('church_expenses', JSON.stringify(expenses));
+            this.reset();
+            document.getElementById('exp-date').valueAsDate = new Date();
+            alert('Το έξοδο καταχωρήθηκε!');
+            updateUI();
+        });
+
+        // Add Income
+        document.getElementById('income-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            incomes.push({
+                id: Date.now(),
+                category: document.getElementById('inc-category').value,
+                amount: parseFloat(document.getElementById('inc-amount').value),
+                date: document.getElementById('inc-date').value,
+                comment: document.getElementById('inc-comment').value
+            });
+            localStorage.setItem('church_incomes', JSON.stringify(incomes));
+            this.reset();
+            document.getElementById('inc-date').valueAsDate = new Date();
+            alert('Το έσοδο καταχωρήθηκε!');
+            updateUI();
+        });
+
+        function updateUI() {
+            // Render Expense History
+            const expList = document.getElementById('expense-list');
+            expList.innerHTML = expenses.length === 0 ? '<li>Δεν υπάρχουν έξοδα</li>' : '';
+            expenses.slice().reverse().forEach(ex => {
+                expList.innerHTML += `<li><div><b>[${ex.category}]</b> ${ex.amount.toFixed(2)}€<br><small style="color:#777">${ex.date} ${ex.receipt ? '• Απ. '+ex.receipt : ''}</small></div><span style="color:var(--red); font-weight:bold;">-${ex.amount.toFixed(2)}€</span></li>`;
+            });
+
+            // Render Income History
+            const incList = document.getElementById('income-list');
+            incList.innerHTML = incomes.length === 0 ? '<li>Δεν υπάρχουν έσοδα</li>' : '';
+            incomes.slice().reverse().forEach(inc => {
+                incList.innerHTML += `<li><div><b>[${inc.category}]</b> ${inc.amount.toFixed(2)}€<br><small style="color:#777">${inc.date} ${inc.comment ? '• '+inc.comment : ''}</small></div><span style="color:var(--green); font-weight:bold;">+${inc.amount.toFixed(2)}€</span></li>`;
+            });
+
+            // Totals
+            const totalInc = incomes.reduce((sum, item) => sum + item.amount, 0);
+            const totalExp = expenses.reduce((sum, item) => sum + item.amount, 0);
+            const balance = totalInc - totalExp;
+
+            document.getElementById('total-income-val').innerText = totalInc.toFixed(2) + ' €';
+            document.getElementById('total-expense-val').innerText = totalExp.toFixed(2) + ' €';
+            
+            const netEl = document.getElementById('net-balance-val');
+            netEl.innerText = balance.toFixed(2) + ' €';
+            netEl.style.color = balance >= 0 ? 'var(--green)' : 'var(--red)';
+            document.getElementById('home-balance').innerText = balance.toFixed(2) + ' €';
+
+            // Breakdown
+            let breakdownHTML = '<ul class="item-list">';
+            let catTotals = {};
+            incomes.forEach(i => catTotals[i.category] = (catTotals[i.category] || 0) + i.amount);
+            expenses.forEach(e => catTotals[e.category] = (catTotals[e.category] || 0) - e.amount);
+            
+            for (let cat in catTotals) {
+                let col = catTotals[cat] >= 0 ? 'var(--green)' : 'var(--red)';
+                breakdownHTML += `<li><span>${cat}</span><strong style="color:${col}">${catTotals[cat].toFixed(2)} €</strong></li>`;
+            }
+            breakdownHTML += '</ul>';
+            document.getElementById('category-breakdown').innerHTML = breakdownHTML;
+        }
+
+        // Init
+        fetchEortologio();
+        renderSpecialFeasts();
+        updateUI();
+    </script>
+</body>
+</html>
