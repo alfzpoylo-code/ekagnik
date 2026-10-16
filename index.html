@@ -2,132 +2,209 @@
 <html lang="el">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a0910">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Εκκλησία Αγίου Νικολάου Σκεπαστής</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <style>
-:root{--primary:#4A0E17;--primary-dark:#330910;--gold:#D4AF37;--gold-light:#F3E5AB;--bg:#F8F5EE;--card:#fff;--text:#2C1D1A;--muted:#8a7a70;--border:#E8DDCD;--green:#1E6028;--red:#A31D1D;--ring:conic-gradient(from 200deg,#F3E5AB,#D4AF37,#8a1c2b,#D4AF37,#F3E5AB)}
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Open Sans',sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);padding-bottom:84px}
-button{font-family:inherit}
+:root{
+  --wine:#4A0E17;--wine-d:#2a0910;--wine-l:#8a1c2b;--gold:#E3C464;--gold-l:#F7E9B8;
+  --text:#fff6ea;--muted:rgba(255,246,234,.62);
+  --green:#7be495;--red:#ff8d8d;
+  --glass:rgba(255,255,255,.10);--glass-2:rgba(255,255,255,.16);
+  --edge:rgba(255,255,255,.28);--edge-soft:rgba(255,255,255,.10);
+  --ring:conic-gradient(from 210deg,#F7E9B8,#E3C464,#c4453f,#8a1c2b,#E3C464,#F7E9B8);
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;height:100%}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--text);background:var(--wine-d);min-height:100%;
+  padding:calc(70px + var(--sat)) 0 calc(110px + var(--sab));overflow-x:hidden}
+button,input,select,textarea{font-family:inherit;color:inherit}
+h1,h2,h3,.serif{font-family:'Noto Serif',Georgia,serif}
 
-/* Top bar */
-header{position:sticky;top:0;z-index:100;background:rgba(248,245,238,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--primary);letter-spacing:.3px}
-#user-status{font-size:13px;font-weight:700;color:var(--primary);cursor:pointer;padding:6px 14px;border:1.5px solid var(--primary);border-radius:20px}
-#user-status:active{background:var(--primary);color:var(--gold)}
+/* Liquid backdrop */
+.bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(160deg,#3a0c15,#1d060b 70%);overflow:hidden}
+.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.75;animation:drift 22s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:60vmax;height:60vmax;background:#9c2236;top:-18vmax;left:-14vmax}
+.bg i:nth-child(2){width:46vmax;height:46vmax;background:#c9962b;bottom:-16vmax;right:-12vmax;opacity:.5;animation-delay:-8s}
+.bg i:nth-child(3){width:34vmax;height:34vmax;background:#5b1b6e;top:38%;left:40%;opacity:.4;animation-delay:-14s}
+@keyframes drift{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+
+/* Glass primitive */
+.glass{background:var(--glass);border:1px solid var(--edge-soft);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
+  box-shadow:inset 0 1px 0 var(--edge),inset 0 -1px 0 rgba(255,255,255,.05),0 10px 34px rgba(0,0,0,.28)}
+
+/* Header */
+header{position:fixed;top:calc(8px + var(--sat));left:12px;right:12px;z-index:100;max-width:760px;margin:0 auto;
+  height:52px;padding:0 8px 0 16px;border-radius:26px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Noto Serif',serif;font-weight:700;font-size:17px;color:var(--gold-l);display:flex;gap:8px;align-items:center}
+.brand b{color:var(--gold)}
+#user-status{display:none;font-size:13px;font-weight:700;padding:0 16px;height:36px;align-items:center;border-radius:18px;
+  background:var(--glass-2);border:1px solid var(--edge-soft);cursor:pointer;color:var(--gold-l)}
 
 /* Login */
-#auth-screen{max-width:380px;margin:0 auto;padding:60px 24px;text-align:center}
-.logo-ring{width:92px;height:92px;border-radius:50%;background:var(--ring);padding:3.5px;margin:0 auto 14px}
-.logo-in{width:100%;height:100%;border-radius:50%;background:var(--primary);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:38px;color:var(--gold)}
-#auth-screen h2{font-family:'Cinzel',serif;color:var(--primary);font-size:22px}
-#auth-screen .sub{font-size:13px;color:var(--muted);margin:4px 0 22px}
-.field{width:100%;padding:13px 14px;margin-bottom:8px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;outline:none}
-.field:focus{border-color:var(--gold)}
-.btn{width:100%;padding:13px;border:none;border-radius:10px;background:var(--primary);color:var(--gold);font-weight:700;font-size:14px;cursor:pointer}
-.btn:active{background:var(--primary-dark)}
-.btn.ghost{background:none;color:var(--muted);margin-top:4px}
+#auth-screen{max-width:400px;margin:6vh auto 0;padding:0 18px}
+.login{padding:34px 24px 26px;border-radius:34px;text-align:center}
+.logo-ring{width:104px;height:104px;border-radius:50%;background:var(--ring);padding:4px;margin:0 auto 16px;box-shadow:0 0 40px rgba(227,196,100,.35)}
+.logo-in{width:100%;height:100%;border-radius:50%;background:var(--wine-d);border:3px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--gold)}
+.login h2{font-size:22px;color:var(--gold-l)}
+.login .sub{font-size:13px;color:var(--muted);margin:4px 0 22px}
+.field,.form-group input,.form-group select,.form-group textarea{width:100%;min-height:48px;padding:12px 16px;font-size:16px;
+  background:rgba(0,0,0,.22);border:1px solid var(--edge-soft);border-radius:16px;outline:none;appearance:none;-webkit-appearance:none;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.2)}
+.field{margin-bottom:10px}
+.field:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(227,196,100,.22)}
+::placeholder{color:rgba(255,246,234,.38)}
+.form-group select option{color:#2a0910}
+.btn{width:100%;min-height:50px;border:none;border-radius:25px;font-weight:800;font-size:15px;cursor:pointer;color:#2a0910;
+  background:linear-gradient(180deg,#f7e9b8,#e3c464 60%,#c9a13f);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 22px rgba(227,196,100,.3);transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--glass);color:var(--text);box-shadow:inset 0 1px 0 var(--edge);margin-top:8px;border:1px solid var(--edge-soft)}
+.hint{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.5}
 
-/* Tabs */
-.tab-content{display:none;max-width:600px;margin:0 auto}
-.tab-content.active{display:block}
+/* Layout */
+.tab-content{display:none;max-width:760px;margin:0 auto;padding:0 12px}
+.tab-content.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.sec-title{padding:20px 6px 10px;font-weight:800;font-size:15px;color:var(--gold-l);display:flex;justify-content:space-between;align-items:baseline}
+.sec-title small{font-weight:600;font-size:12px;color:var(--muted)}
+.card{border-radius:28px;overflow:hidden;margin-bottom:14px}
 
 /* Stories */
-.stories{display:flex;gap:14px;overflow-x:auto;padding:14px 16px;scrollbar-width:none}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:12px 6px 6px;scrollbar-width:none;scroll-snap-type:x proximity;margin:0 -12px;padding-left:18px;padding-right:18px}
 .stories::-webkit-scrollbar{display:none}
-.story{flex:0 0 auto;width:68px;text-align:center;cursor:pointer;background:none;border:none}
-.ring{width:66px;height:66px;border-radius:50%;background:var(--ring);padding:3px;display:block}
-.ring span{width:100%;height:100%;border-radius:50%;background:var(--primary);border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:25px}
-.story small{display:block;margin-top:5px;font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.story{flex:0 0 auto;width:74px;text-align:center;cursor:pointer;background:none;border:none;scroll-snap-align:start}
+.ring{width:72px;height:72px;border-radius:50%;background:var(--ring);padding:3px;display:block}
+.ring span{width:100%;height:100%;border-radius:50%;background:rgba(42,9,16,.85);border:3px solid #2a0910;display:flex;align-items:center;justify-content:center;font-size:27px}
+.story small{display:block;margin-top:6px;font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* Posts */
-.post{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:10px}
-.post-head{display:flex;align-items:center;gap:10px;padding:10px 14px}
-.avatar{width:36px;height:36px;border-radius:50%;background:var(--ring);padding:2px;flex:none}
-.avatar span{width:100%;height:100%;border-radius:50%;background:var(--primary);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;border:1.5px solid #fff}
-.post-head b{font-size:13px;display:block}
-.post-head small{font-size:11px;color:var(--muted)}
-.post-hero{background:linear-gradient(160deg,var(--primary) 0%,#7a1c2b 100%);color:var(--gold-light);padding:34px 22px;text-align:center;position:relative}
-.post-hero .cross{font-size:34px;color:var(--gold)}
-.post-hero .date{font-size:12px;color:var(--gold);margin-top:8px;opacity:.9}
-.post-hero h2{font-family:'Cinzel',serif;font-size:21px;margin:8px 0 6px;line-height:1.3}
-.post-hero p{font-size:12.5px;opacity:.85;line-height:1.5}
-.post-body{padding:12px 14px 14px}
-.post-body .lbl{font-size:12px;color:var(--muted)}
-.post-body .big{font-family:'Cinzel',serif;font-size:28px;color:var(--primary);font-weight:700}
-.sec-title{padding:14px 16px 4px;font-weight:700;font-size:14px;color:var(--primary)}
+/* Post cards */
+.post-head{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--ring);padding:2px;flex:none}
+.avatar span{width:100%;height:100%;border-radius:50%;background:var(--wine-d);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:15px;border:1.5px solid #2a0910}
+.post-head b{font-size:13.5px;display:block}
+.post-head small{font-size:11.5px;color:var(--muted)}
+.post-hero{margin:0 10px 10px;border-radius:22px;padding:34px 20px;text-align:center;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 20% 0,rgba(227,196,100,.35),transparent 55%),linear-gradient(160deg,rgba(138,28,43,.9),rgba(74,14,23,.95));
+  border:1px solid var(--edge-soft);box-shadow:inset 0 1px 0 var(--edge)}
+.post-hero .cross{font-size:38px;color:var(--gold);text-shadow:0 0 24px rgba(227,196,100,.6)}
+.post-hero h2{font-size:clamp(20px,5vw,28px);margin:8px 0 6px;line-height:1.3;color:#fff}
+.post-hero p{font-size:13px;color:var(--gold-l);opacity:.9;line-height:1.5}
+.post-body{padding:2px 18px 18px}
+.big{font-family:'Noto Serif',serif;font-size:clamp(32px,9vw,44px);font-weight:700;color:var(--gold-l);letter-spacing:-.5px}
+.lbl{font-size:12px;color:var(--muted)}
 
-/* Profile-style stats */
-.profile{display:flex;align-items:center;gap:18px;padding:16px}
-.profile .ring{width:80px;height:80px}
-.profile .ring span{font-size:32px}
-.stats{flex:1;display:flex;justify-content:space-around;text-align:center}
-.stats b{display:block;font-size:16px}
-.stats small{font-size:11px;color:var(--muted)}
-.bio{padding:0 16px 14px;font-size:13px;line-height:1.45}
-.bio b{display:block}
+/* Summary pills */
+.pills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.pill{border-radius:22px;padding:14px 8px;text-align:center}
+.pill b{display:block;font-size:clamp(14px,4vw,18px);font-weight:800;white-space:nowrap}
+.pill small{font-size:11.5px;color:var(--muted);font-weight:600}
 
 /* Forms */
-.form-card{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px;margin-bottom:10px}
-.form-card h3{font-size:15px;color:var(--primary);margin-bottom:12px}
-.form-group{margin-bottom:10px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:#fff;outline:none;font-family:inherit}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-card{border-radius:28px;padding:18px;margin-bottom:14px}
+.form-card h3{font-size:17px;color:var(--gold-l);margin-bottom:14px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;padding-left:4px}
+.form-group textarea{resize:vertical;min-height:72px}
+.form-group select{background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);
+  background-position:calc(100% - 22px) 52%,calc(100% - 16px) 52%;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px}
+input[type=date]{min-height:48px}
 
-/* Feed list */
-.feed{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f1ebe0}
+/* Lists */
+.feed{border-radius:28px;overflow:hidden;margin-bottom:14px}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--edge-soft)}
 .item:last-child{border-bottom:none}
-.item .ic{width:42px;height:42px;border-radius:50%;background:var(--ring);padding:2px;flex:none}
-.item .ic span{width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:18px}
+.item.tap{cursor:pointer}.item.tap:active{background:var(--glass)}
+.item .ic{width:46px;height:46px;border-radius:50%;background:var(--ring);padding:2px;flex:none}
+.item .ic span{width:100%;height:100%;border-radius:50%;background:rgba(42,9,16,.85);display:flex;align-items:center;justify-content:center;font-size:19px}
 .item .mid{flex:1;min-width:0}
-.item .mid b{font-size:13.5px;display:block}
-.item .mid small{font-size:11.5px;color:var(--muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .amt{font-weight:700;font-size:14px;white-space:nowrap}
-.item .acts{display:flex;flex-direction:column;gap:2px}
-.btn-icon{background:none;border:none;font-size:14px;cursor:pointer;padding:3px}
-.empty{padding:26px;text-align:center;color:var(--muted);font-size:13px}
+.item .mid b{font-size:14px;display:block}
+.item .mid small{font-size:12px;color:var(--muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .amt{font-weight:800;font-size:15px;white-space:nowrap}
+.acts{display:flex;gap:2px}
+.btn-icon{width:40px;height:40px;border-radius:50%;background:var(--glass);border:1px solid var(--edge-soft);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn-icon:active{background:var(--glass-2)}
+.empty{padding:30px;text-align:center;color:var(--muted);font-size:13.5px}
+.bar{height:5px;border-radius:5px;background:rgba(255,255,255,.12);margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:5px}
 
-/* Bottom nav */
-nav{position:fixed;bottom:0;left:0;width:100%;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:100}
-nav button{background:none;border:none;color:#a99c92;font-size:10.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px;filter:grayscale(1);opacity:.7}
-nav button.active{color:var(--primary);font-weight:700;filter:none;opacity:1}
-nav button .icon{font-size:23px}
-nav button.active .icon{transform:scale(1.1)}
+/* Fund profile */
+.profile{display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 14px 8px}
+.profile .ring{width:92px;height:92px;box-shadow:0 0 36px rgba(227,196,100,.3)}
+.profile .ring span{font-size:38px}
+.profile h2{font-size:18px;color:var(--gold-l);margin-top:12px}
+.profile p{font-size:12.5px;color:var(--muted);margin:4px 0 16px}
+
+/* Floating glass nav */
+nav{position:fixed;bottom:calc(12px + var(--sab));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),460px);z-index:100;
+  border-radius:34px;padding:7px;display:none;justify-content:space-between;gap:2px}
+nav button{flex:1;min-height:56px;background:none;border:none;border-radius:27px;color:var(--muted);font-size:10.5px;font-weight:700;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:.25s}
+nav button .icon{font-size:22px;filter:grayscale(1);opacity:.75;transition:.25s}
+nav button.active{color:var(--gold-l);background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.1));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 14px rgba(0,0,0,.25)}
+nav button.active .icon{filter:none;opacity:1;transform:scale(1.12)}
 
 /* Story viewer */
-#story-view{display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--primary-dark),var(--primary) 60%,#7a1c2b);color:var(--gold-light);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}
-#story-view.open{display:flex}
-#story-bar{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;right:14px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
-#story-bar i{display:block;height:100%;width:0;background:var(--gold)}
+#story-view{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;
+  background:radial-gradient(circle at 50% 30%,#8a1c2b,#2a0910 75%);color:var(--gold-l)}
+#story-view.open{display:flex;animation:fade .3s}
+#story-bar{position:absolute;top:calc(14px + var(--sat));left:14px;right:14px;height:3px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+#story-bar i{display:block;height:100%;width:0;background:#fff}
 #story-bar.go i{width:100%;transition:width 4s linear}
-#story-view .big-ic{font-size:70px}
-#story-view h2{font-family:'Cinzel',serif;font-size:26px;margin:16px 0 8px;color:#fff}
-#story-view p{color:var(--gold);font-size:15px}
-#story-view .x{position:absolute;top:calc(26px + env(safe-area-inset-top,0px));right:18px;font-size:26px;color:#fff;background:none;border:none}
+#story-view .big-ic{font-size:84px;filter:drop-shadow(0 0 30px rgba(227,196,100,.6))}
+#story-view h2{font-size:clamp(24px,6vw,34px);margin:18px 0 8px;color:#fff}
+#story-view p{color:var(--gold);font-size:16px}
+#story-view .x{position:absolute;top:calc(26px + var(--sat));right:16px;width:42px;height:42px;border-radius:50%;font-size:20px;color:#fff;border:1px solid var(--edge-soft);background:var(--glass-2)}
+
+/* Toast */
+#toast{position:fixed;left:50%;top:calc(72px + var(--sat));transform:translate(-50%,-20px);opacity:0;pointer-events:none;z-index:400;
+  padding:12px 22px;border-radius:24px;font-weight:700;font-size:14px;transition:.35s;max-width:90%;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Tablet & desktop */
+@media (min-width:768px){
+  body{padding-top:calc(84px + var(--sat))}
+  header,.tab-content{max-width:980px}
+  .stories{margin:0;padding-left:6px}
+  .split{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:16px;align-items:start}
+  .split .form-card{position:sticky;top:calc(80px + var(--sat))}
+  .split .side .sec-title:first-child{padding-top:4px}
+  #tab-home.active{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}
+  #tab-home .stories,#tab-home .full{grid-column:1/-1}
+  .item{padding:14px 18px}
+}
+@media (max-width:360px){.pill b{font-size:13px}.story{width:66px}.ring{width:64px;height:64px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:rgba(58,12,21,.92)}}
 </style>
 </head>
 <body>
+<div class="bg"><i></i><i></i><i></i></div>
 
-<header>
-  <div class="brand">☦ Αγ. Νικόλαος</div>
+<header class="glass">
+  <div class="brand"><b>☦</b> Αγ. Νικόλαος</div>
   <div id="user-status" onclick="logout()">Αποσύνδεση</div>
 </header>
 
 <!-- LOGIN -->
 <div id="auth-screen">
-  <div class="logo-ring"><div class="logo-in">☦</div></div>
-  <h2>Αγ. Νικόλαος Σκεπαστής</h2>
-  <p class="sub">Είσοδος Επιτροπής</p>
-  <input class="field" type="email" id="login-email" value="agnik@gmail.com" placeholder="Email">
-  <input class="field" type="password" id="login-password" placeholder="Κωδικός πρόσβασης">
-  <button class="btn" onclick="login()">Σύνδεση</button>
-  <p style="font-size:11px;color:var(--muted);margin-top:12px">Απαιτείται λογαριασμός διαχειριστή για ασφαλή συγχρονισμό στο Cloud.</p>
+  <div class="login glass">
+    <div class="logo-ring"><div class="logo-in">☦</div></div>
+    <h2>Αγ. Νικόλαος Σκεπαστής</h2>
+    <p class="sub">Είσοδος Επιτροπής</p>
+    <input class="field" type="email" id="login-email" value="agnik@gmail.com" placeholder="Email" autocomplete="username">
+    <input class="field" type="password" id="login-password" placeholder="Κωδικός πρόσβασης" autocomplete="current-password">
+    <button class="btn" onclick="login()">Σύνδεση</button>
+    <p class="hint">Απαιτείται λογαριασμός διαχειριστή για ασφαλή συγχρονισμό στο Cloud.</p>
+  </div>
 </div>
 
 <div id="app-content" style="display:none">
@@ -136,7 +213,7 @@ nav button.active .icon{transform:scale(1.1)}
   <div id="tab-home" class="tab-content active">
     <div class="stories" id="stories"></div>
 
-    <div class="post">
+    <div class="card glass">
       <div class="post-head">
         <div class="avatar"><span>☦</span></div>
         <div><b>Σημερινό Εορτολόγιο</b><small id="today-date-text"></small></div>
@@ -148,7 +225,7 @@ nav button.active .icon{transform:scale(1.1)}
       </div>
     </div>
 
-    <div class="post">
+    <div class="card glass">
       <div class="post-head">
         <div class="avatar"><span>⚖</span></div>
         <div><b>Ταμείο Ενορίας</b><small>Διαθέσιμο υπόλοιπο</small></div>
@@ -156,80 +233,93 @@ nav button.active .icon{transform:scale(1.1)}
       <div class="post-body"><div class="big" id="home-balance">0.00 €</div></div>
     </div>
 
-    <div class="sec-title">Εορτές Ναού</div>
-    <div class="feed" id="feast-list"></div>
+    <div class="full">
+      <div class="sec-title">Εορτές Ναού <small>Πατήστε για προβολή</small></div>
+      <div class="feed glass" id="feast-list"></div>
+    </div>
   </div>
 
   <!-- ΕΞΟΔΑ -->
   <div id="tab-expenses" class="tab-content">
-    <div class="form-card">
-      <h3 id="exp-form-title">📉 Καταχώρηση Εξόδου</h3>
-      <form id="expense-form">
-        <input type="hidden" id="exp-edit-id" value="">
-        <div class="form-group"><label>Κατηγορία</label>
-          <select id="exp-category" required>
-            <option value="ΔΕΗ">⚡ ΔΕΗ</option><option value="Στεφάνια">💐 Στεφάνια</option><option value="Κεριά">🕯️ Κεριά</option><option value="Γιορτές">✝️ Γιορτές</option><option value="Άλλος">➕ Άλλος</option>
-          </select></div>
-        <div class="form-group"><label>Ποσό (€)</label><input type="number" step="0.01" id="exp-amount" required placeholder="0.00"></div>
-        <div class="form-group"><label>Ημερομηνία</label><input type="date" id="exp-date" required></div>
-        <div class="form-group"><label>Αριθμός Απόδειξης (Προαιρετικό)</label><input type="text" id="exp-receipt" placeholder="π.χ. 1245"></div>
-        <div class="form-group"><label>Σχόλια (Προαιρετικό)</label><textarea id="exp-comment" rows="2" placeholder="Λεπτομέρειες..."></textarea></div>
-        <button type="submit" id="exp-submit-btn" class="btn">Καταχώρηση Εξόδου</button>
-        <button type="button" id="exp-cancel-btn" class="btn ghost" style="display:none" onclick="cancelExpEdit()">Ακύρωση Επεξεργασίας</button>
-      </form>
+    <div class="split">
+      <div class="form-card glass">
+        <h3 id="exp-form-title">📉 Καταχώρηση Εξόδου</h3>
+        <form id="expense-form">
+          <input type="hidden" id="exp-edit-id" value="">
+          <div class="form-group"><label>Κατηγορία</label>
+            <select id="exp-category" required>
+              <option value="ΔΕΗ">⚡ ΔΕΗ</option><option value="Στεφάνια">💐 Στεφάνια</option><option value="Κεριά">🕯️ Κεριά</option><option value="Γιορτές">✝️ Γιορτές</option><option value="Άλλος">➕ Άλλος</option>
+            </select></div>
+          <div class="form-group"><label>Ποσό (€)</label><input type="number" step="0.01" inputmode="decimal" id="exp-amount" required placeholder="0.00"></div>
+          <div class="form-group"><label>Ημερομηνία</label><input type="date" id="exp-date" required></div>
+          <div class="form-group"><label>Αριθμός Απόδειξης (Προαιρετικό)</label><input type="text" id="exp-receipt" placeholder="π.χ. 1245"></div>
+          <div class="form-group"><label>Σχόλια (Προαιρετικό)</label><textarea id="exp-comment" rows="2" placeholder="Λεπτομέρειες..."></textarea></div>
+          <button type="submit" id="exp-submit-btn" class="btn">Καταχώρηση Εξόδου</button>
+          <button type="button" id="exp-cancel-btn" class="btn ghost" style="display:none" onclick="cancelExpEdit()">Ακύρωση Επεξεργασίας</button>
+        </form>
+      </div>
+      <div class="side">
+        <div class="sec-title">Ιστορικό Εξόδων <small id="exp-total"></small></div>
+        <div class="feed glass" id="expense-list"></div>
+      </div>
     </div>
-    <div class="sec-title">Ιστορικό Εξόδων</div>
-    <div class="feed" id="expense-list"></div>
   </div>
 
   <!-- ΕΣΟΔΑ -->
   <div id="tab-incomes" class="tab-content">
-    <div class="form-card">
-      <h3 id="inc-form-title">📈 Καταχώρηση Εσόδου</h3>
-      <form id="income-form">
-        <input type="hidden" id="inc-edit-id" value="">
-        <div class="form-group"><label>Κατηγορία</label>
-          <select id="inc-category" required>
-            <option value="Παγκάρι">🕯️ Παγκάρι</option><option value="Δίσκος">🪙 Δίσκος</option><option value="Ιεροπραξίες">💍 Ιεροπραξίες (Μνημόσυνα/Γάμοι/Βαφτίσεις)</option><option value="Άλλος">➕ Άλλος</option>
-          </select></div>
-        <div class="form-group"><label>Ποσό (€)</label><input type="number" step="0.01" id="inc-amount" required placeholder="0.00"></div>
-        <div class="form-group"><label>Ημερομηνία</label><input type="date" id="inc-date" required></div>
-        <div class="form-group"><label>Σχόλια / Δωρητής (Προαιρετικό)</label><textarea id="inc-comment" rows="2" placeholder="Ονοματεπώνυμο ή σημείωση..."></textarea></div>
-        <button type="submit" id="inc-submit-btn" class="btn">Καταχώρηση Εσόδου</button>
-        <button type="button" id="inc-cancel-btn" class="btn ghost" style="display:none" onclick="cancelIncEdit()">Ακύρωση Επεξεργασίας</button>
-      </form>
+    <div class="split">
+      <div class="form-card glass">
+        <h3 id="inc-form-title">📈 Καταχώρηση Εσόδου</h3>
+        <form id="income-form">
+          <input type="hidden" id="inc-edit-id" value="">
+          <div class="form-group"><label>Κατηγορία</label>
+            <select id="inc-category" required>
+              <option value="Παγκάρι">🕯️ Παγκάρι</option><option value="Δίσκος">🪙 Δίσκος</option><option value="Ιεροπραξίες">💍 Ιεροπραξίες (Μνημόσυνα/Γάμοι/Βαφτίσεις)</option><option value="Άλλος">➕ Άλλος</option>
+            </select></div>
+          <div class="form-group"><label>Ποσό (€)</label><input type="number" step="0.01" inputmode="decimal" id="inc-amount" required placeholder="0.00"></div>
+          <div class="form-group"><label>Ημερομηνία</label><input type="date" id="inc-date" required></div>
+          <div class="form-group"><label>Σχόλια / Δωρητής (Προαιρετικό)</label><textarea id="inc-comment" rows="2" placeholder="Ονοματεπώνυμο ή σημείωση..."></textarea></div>
+          <button type="submit" id="inc-submit-btn" class="btn">Καταχώρηση Εσόδου</button>
+          <button type="button" id="inc-cancel-btn" class="btn ghost" style="display:none" onclick="cancelIncEdit()">Ακύρωση Επεξεργασίας</button>
+        </form>
+      </div>
+      <div class="side">
+        <div class="sec-title">Ιστορικό Εσόδων <small id="inc-total"></small></div>
+        <div class="feed glass" id="income-list"></div>
+      </div>
     </div>
-    <div class="sec-title">Ιστορικό Εσόδων</div>
-    <div class="feed" id="income-list"></div>
   </div>
 
   <!-- ΤΑΜΕΙΟ -->
   <div id="tab-analysis" class="tab-content">
     <div class="profile">
       <div class="ring"><span>☦</span></div>
-      <div class="stats">
-        <div><b id="total-income-val" style="color:var(--green)">0.00 €</b><small>Έσοδα</small></div>
-        <div><b id="total-expense-val" style="color:var(--red)">0.00 €</b><small>Έξοδα</small></div>
-        <div><b id="net-balance-val">0.00 €</b><small>Υπόλοιπο</small></div>
-      </div>
+      <h2>Εκκλησία Αγίου Νικολάου Σκεπαστής</h2>
+      <p>Συγκεντρωτικά οικονομικά της ενορίας</p>
     </div>
-    <div class="bio"><b>Εκκλησία Αγίου Νικολάου Σκεπαστής</b>Συγκεντρωτικά οικονομικά της ενορίας</div>
+    <div class="pills">
+      <div class="pill glass"><b id="total-income-val" style="color:var(--green)">0.00 €</b><small>Έσοδα</small></div>
+      <div class="pill glass"><b id="total-expense-val" style="color:var(--red)">0.00 €</b><small>Έξοδα</small></div>
+      <div class="pill glass"><b id="net-balance-val">0.00 €</b><small>Υπόλοιπο</small></div>
+    </div>
     <div class="sec-title">Ανά Κατηγορία</div>
-    <div class="feed" id="category-breakdown"></div>
+    <div class="feed glass" id="category-breakdown"></div>
   </div>
-
-  <nav>
-    <button onclick="switchTab('home')" class="active" id="nav-home"><span class="icon">⛪</span>Αρχική</button>
-    <button onclick="switchTab('incomes')" id="nav-incomes"><span class="icon">📈</span>Έσοδα</button>
-    <button onclick="switchTab('expenses')" id="nav-expenses"><span class="icon">📉</span>Έξοδα</button>
-    <button onclick="switchTab('analysis')" id="nav-analysis"><span class="icon">📊</span>Ταμείο</button>
-  </nav>
 </div>
+
+<nav class="glass" id="main-nav">
+  <button onclick="switchTab('home')" class="active" id="nav-home"><span class="icon">⛪</span>Αρχική</button>
+  <button onclick="switchTab('incomes')" id="nav-incomes"><span class="icon">📈</span>Έσοδα</button>
+  <button onclick="switchTab('expenses')" id="nav-expenses"><span class="icon">📉</span>Έξοδα</button>
+  <button onclick="switchTab('analysis')" id="nav-analysis"><span class="icon">📊</span>Ταμείο</button>
+</nav>
+
+<div id="toast" class="glass"></div>
 
 <!-- Story viewer -->
 <div id="story-view" onclick="closeStory()">
   <div id="story-bar"><i></i></div>
-  <button class="x">✕</button>
+  <button class="x" aria-label="Κλείσιμο">✕</button>
   <div class="big-ic" id="sv-ic"></div>
   <h2 id="sv-title"></h2>
   <p id="sv-date"></p>
@@ -268,49 +358,57 @@ const FEASTS = [
   {n:'Μεγάλη Εβδομάδα & Πάσχα', s:'Πάσχα', d:'Κινητή Εορτή', i:'🕯️'}
 ];
 const CAT_ICON = {'ΔΕΗ':'⚡','Στεφάνια':'💐','Κεριά':'🕯️','Γιορτές':'✝️','Παγκάρι':'🕯️','Δίσκος':'🪙','Ιεροπραξίες':'💍','Άλλος':'➕'};
+const $ = id => document.getElementById(id);
+const eur = n => n.toLocaleString('el-GR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-document.getElementById('stories').innerHTML = FEASTS.map((f,i)=>
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+$('stories').innerHTML = FEASTS.map((f,i)=>
   `<button class="story" onclick="openStory(${i})"><span class="ring"><span>${f.i}</span></span><small>${f.s}</small></button>`).join('');
-document.getElementById('feast-list').innerHTML = FEASTS.map((f,i)=>
-  `<div class="item" onclick="openStory(${i})" style="cursor:pointer"><div class="ic"><span>${f.i}</span></div><div class="mid"><b>${f.n}</b><small>${f.d}</small></div></div>`).join('');
+$('feast-list').innerHTML = FEASTS.map((f,i)=>
+  `<div class="item tap" onclick="openStory(${i})"><div class="ic"><span>${f.i}</span></div><div class="mid"><b>${f.n}</b><small>${f.d}</small></div></div>`).join('');
 
 let storyTimer;
 function openStory(i){
   const f = FEASTS[i];
-  document.getElementById('sv-ic').innerText = f.i;
-  document.getElementById('sv-title').innerText = f.n;
-  document.getElementById('sv-date').innerText = f.d;
-  const bar = document.getElementById('story-bar');
+  $('sv-ic').innerText = f.i; $('sv-title').innerText = f.n; $('sv-date').innerText = f.d;
+  const bar = $('story-bar');
   bar.classList.remove('go'); void bar.offsetWidth;
-  document.getElementById('story-view').classList.add('open');
+  $('story-view').classList.add('open');
   bar.classList.add('go');
   clearTimeout(storyTimer);
   storyTimer = setTimeout(closeStory, 4000);
 }
 function closeStory(){
   clearTimeout(storyTimer);
-  document.getElementById('story-view').classList.remove('open');
-  document.getElementById('story-bar').classList.remove('go');
+  $('story-view').classList.remove('open');
+  $('story-bar').classList.remove('go');
 }
 
 const today = new Date();
-document.getElementById('exp-date').valueAsDate = today;
-document.getElementById('inc-date').valueAsDate = today;
-document.getElementById('today-date-text').innerText = today.toLocaleDateString('el-GR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+$('exp-date').valueAsDate = today;
+$('inc-date').valueAsDate = today;
+$('today-date-text').innerText = today.toLocaleDateString('el-GR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-document.getElementById('user-status').style.display = 'none';
 if(auth) auth.onAuthStateChanged(user=>{
   const logged = !!user;
-  document.getElementById('auth-screen').style.display = logged ? 'none' : 'block';
-  document.getElementById('app-content').style.display = logged ? 'block' : 'none';
-  document.getElementById('user-status').style.display = logged ? 'block' : 'none';
+  $('auth-screen').style.display = logged ? 'none' : 'block';
+  $('app-content').style.display = logged ? 'block' : 'none';
+  $('user-status').style.display = logged ? 'flex' : 'none';
+  $('main-nav').style.display = logged ? 'flex' : 'none';
   if(logged) loadDataFromCloud();
 });
+else $('auth-screen').style.display = 'block';
 
 function login(){
   if(!auth){ alert(fbError); return; }
-  const email = document.getElementById('login-email').value;
-  const pass = document.getElementById('login-password').value;
+  const email = $('login-email').value;
+  const pass = $('login-password').value;
   auth.signInWithEmailAndPassword(email, pass).catch(error=>{ alert('Σφάλμα σύνδεσης: ' + error.message); });
 }
 function logout(){ if(auth && confirm("Θέλετε να αποσυνδεθείτε;")) auth.signOut(); }
@@ -318,15 +416,15 @@ function logout(){ if(auth && confirm("Θέλετε να αποσυνδεθεί�
 function switchTab(t){
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  document.getElementById('nav-'+t).classList.add('active');
+  $('tab-'+t).classList.add('active');
+  $('nav-'+t).classList.add('active');
   window.scrollTo({top:0});
 }
 
 fetch('https://eortologio.net/api/today').then(r=>r.json()).then(data=>{
-  document.getElementById('today-saint').innerText = data.names ? data.names.join(', ') : 'Εορτή Ημέρας';
-  document.getElementById('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
-}).catch(()=>{ document.getElementById('today-saint').innerText = "Μνήμη Αγίων Ημέρας"; });
+  $('today-saint').innerText = data.names ? data.names.join(', ') : 'Εορτή Ημέρας';
+  $('today-desc').innerText = data.feasts ? data.feasts.join(' • ') : '';
+}).catch(()=>{ $('today-saint').innerText = "Μνήμη Αγίων Ημέρας"; });
 
 let listening = false;
 function loadDataFromCloud(){
@@ -336,80 +434,80 @@ function loadDataFromCloud(){
 }
 
 // ---- ΕΞΟΔΑ ----
-document.getElementById('expense-form').addEventListener('submit', function(e){
+$('expense-form').addEventListener('submit', function(e){
   e.preventDefault();
-  const editId = document.getElementById('exp-edit-id').value;
+  const editId = $('exp-edit-id').value;
   const item = {
-    category: document.getElementById('exp-category').value,
-    amount: parseFloat(document.getElementById('exp-amount').value),
-    date: document.getElementById('exp-date').value,
-    receipt: document.getElementById('exp-receipt').value,
-    comment: document.getElementById('exp-comment').value
+    category: $('exp-category').value,
+    amount: parseFloat($('exp-amount').value),
+    date: $('exp-date').value,
+    receipt: $('exp-receipt').value,
+    comment: $('exp-comment').value
   };
   if(editId){
-    rtdb.ref('expenses/'+editId).set(item).then(()=>{ cancelExpEdit(); alert('Το έξοδο ενημερώθηκε!'); });
+    rtdb.ref('expenses/'+editId).set(item).then(()=>{ cancelExpEdit(); toast('Το έξοδο ενημερώθηκε!'); });
   } else {
-    rtdb.ref('expenses').push(item).then(()=>{ this.reset(); document.getElementById('exp-date').valueAsDate = new Date(); alert('Το έξοδο αποθηκεύτηκε στο cloud!'); });
+    rtdb.ref('expenses').push(item).then(()=>{ this.reset(); $('exp-date').valueAsDate = new Date(); toast('Το έξοδο αποθηκεύτηκε στο cloud!'); });
   }
 });
 function editExpense(id){
   const ex = expenses.find(i=>i.id===id); if(!ex) return;
-  document.getElementById('exp-edit-id').value = ex.id;
-  document.getElementById('exp-category').value = ex.category;
-  document.getElementById('exp-amount').value = ex.amount;
-  document.getElementById('exp-date').value = ex.date;
-  document.getElementById('exp-receipt').value = ex.receipt || '';
-  document.getElementById('exp-comment').value = ex.comment || '';
-  document.getElementById('exp-form-title').innerText = "✏️ Επεξεργασία Εξόδου";
-  document.getElementById('exp-submit-btn').innerText = "Αποθήκευση Αλλαγών";
-  document.getElementById('exp-cancel-btn').style.display = "block";
+  $('exp-edit-id').value = ex.id;
+  $('exp-category').value = ex.category;
+  $('exp-amount').value = ex.amount;
+  $('exp-date').value = ex.date;
+  $('exp-receipt').value = ex.receipt || '';
+  $('exp-comment').value = ex.comment || '';
+  $('exp-form-title').innerText = "✏️ Επεξεργασία Εξόδου";
+  $('exp-submit-btn').innerText = "Αποθήκευση Αλλαγών";
+  $('exp-cancel-btn').style.display = "block";
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function cancelExpEdit(){
-  document.getElementById('exp-edit-id').value = "";
-  document.getElementById('expense-form').reset();
-  document.getElementById('exp-date').valueAsDate = new Date();
-  document.getElementById('exp-form-title').innerText = "📉 Καταχώρηση Εξόδου";
-  document.getElementById('exp-submit-btn').innerText = "Καταχώρηση Εξόδου";
-  document.getElementById('exp-cancel-btn').style.display = "none";
+  $('exp-edit-id').value = "";
+  $('expense-form').reset();
+  $('exp-date').valueAsDate = new Date();
+  $('exp-form-title').innerText = "📉 Καταχώρηση Εξόδου";
+  $('exp-submit-btn').innerText = "Καταχώρηση Εξόδου";
+  $('exp-cancel-btn').style.display = "none";
 }
 function deleteExpense(id){ if(confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έξοδο;")) rtdb.ref('expenses/'+id).remove(); }
 
 // ---- ΕΣΟΔΑ ----
-document.getElementById('income-form').addEventListener('submit', function(e){
+$('income-form').addEventListener('submit', function(e){
   e.preventDefault();
-  const editId = document.getElementById('inc-edit-id').value;
+  const editId = $('inc-edit-id').value;
   const item = {
-    category: document.getElementById('inc-category').value,
-    amount: parseFloat(document.getElementById('inc-amount').value),
-    date: document.getElementById('inc-date').value,
-    comment: document.getElementById('inc-comment').value
+    category: $('inc-category').value,
+    amount: parseFloat($('inc-amount').value),
+    date: $('inc-date').value,
+    comment: $('inc-comment').value
   };
   if(editId){
-    rtdb.ref('incomes/'+editId).set(item).then(()=>{ cancelIncEdit(); alert('Το έσοδο ενημερώθηκε!'); });
+    rtdb.ref('incomes/'+editId).set(item).then(()=>{ cancelIncEdit(); toast('Το έσοδο ενημερώθηκε!'); });
   } else {
-    rtdb.ref('incomes').push(item).then(()=>{ this.reset(); document.getElementById('inc-date').valueAsDate = new Date(); alert('Το έσοδο αποθηκεύτηκε στο cloud!'); });
+    rtdb.ref('incomes').push(item).then(()=>{ this.reset(); $('inc-date').valueAsDate = new Date(); toast('Το έσοδο αποθηκεύτηκε στο cloud!'); });
   }
 });
 function editIncome(id){
   const inc = incomes.find(i=>i.id===id); if(!inc) return;
-  document.getElementById('inc-edit-id').value = inc.id;
-  document.getElementById('inc-category').value = inc.category;
-  document.getElementById('inc-amount').value = inc.amount;
-  document.getElementById('inc-date').value = inc.date;
-  document.getElementById('inc-comment').value = inc.comment || '';
-  document.getElementById('inc-form-title').innerText = "✏️ Επεξεργασία Εσόδου";
-  document.getElementById('inc-submit-btn').innerText = "Αποθήκευση Αλλαγών";
-  document.getElementById('inc-cancel-btn').style.display = "block";
+  $('inc-edit-id').value = inc.id;
+  $('inc-category').value = inc.category;
+  $('inc-amount').value = inc.amount;
+  $('inc-date').value = inc.date;
+  $('inc-comment').value = inc.comment || '';
+  $('inc-form-title').innerText = "✏️ Επεξεργασία Εσόδου";
+  $('inc-submit-btn').innerText = "Αποθήκευση Αλλαγών";
+  $('inc-cancel-btn').style.display = "block";
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function cancelIncEdit(){
-  document.getElementById('inc-edit-id').value = "";
-  document.getElementById('income-form').reset();
-  document.getElementById('inc-date').valueAsDate = new Date();
-  document.getElementById('inc-form-title').innerText = "📈 Καταχώρηση Εσόδου";
-  document.getElementById('inc-submit-btn').innerText = "Καταχώρηση Εσόδου";
-  document.getElementById('inc-cancel-btn').style.display = "none";
+  $('inc-edit-id').value = "";
+  $('income-form').reset();
+  $('inc-date').valueAsDate = new Date();
+  $('inc-form-title').innerText = "📈 Καταχώρηση Εσόδου";
+  $('inc-submit-btn').innerText = "Καταχώρηση Εσόδου";
+  $('inc-cancel-btn').style.display = "none";
 }
 function deleteIncome(id){ if(confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έσοδο;")) rtdb.ref('incomes/'+id).remove(); }
 
@@ -417,34 +515,38 @@ function deleteIncome(id){ if(confirm("Είστε σίγουροι ότι θέλ
 function row(it, sign, color, editFn, delFn, extra){
   return `<div class="item">
     <div class="ic"><span>${CAT_ICON[it.category]||'➕'}</span></div>
-    <div class="mid"><b>${it.category}</b><small>${it.date}${extra}${it.comment?' • '+it.comment:''}</small></div>
+    <div class="mid"><b>${esc(it.category)}</b><small>${esc(it.date)}${esc(extra)}${it.comment?' • '+esc(it.comment):''}</small></div>
     <div class="amt" style="color:${color}">${sign}${it.amount.toFixed(2)}€</div>
     <div class="acts"><button class="btn-icon" onclick="${editFn}('${it.id}')" title="Επεξεργασία">✏️</button><button class="btn-icon" onclick="${delFn}('${it.id}')" title="Διαγραφή">🗑️</button></div>
   </div>`;
 }
 function updateUI(){
   const byDate = (a,b)=> (b.date||'').localeCompare(a.date||'');
-  document.getElementById('expense-list').innerHTML = expenses.length===0 ? '<div class="empty">Δεν υπάρχουν έξοδα ακόμα</div>' :
+  $('expense-list').innerHTML = expenses.length===0 ? '<div class="empty">Δεν υπάρχουν έξοδα ακόμα.<br>Καταχωρήστε το πρώτο από τη φόρμα.</div>' :
     expenses.slice().sort(byDate).map(ex=>row(ex,'-','var(--red)','editExpense','deleteExpense', ex.receipt?' • Απ. '+ex.receipt:'')).join('');
-  document.getElementById('income-list').innerHTML = incomes.length===0 ? '<div class="empty">Δεν υπάρχουν έσοδα ακόμα</div>' :
+  $('income-list').innerHTML = incomes.length===0 ? '<div class="empty">Δεν υπάρχουν έσοδα ακόμα.<br>Καταχωρήστε το πρώτο από τη φόρμα.</div>' :
     incomes.slice().sort(byDate).map(inc=>row(inc,'+','var(--green)','editIncome','deleteIncome','')).join('');
 
   const totalInc = incomes.reduce((s,i)=>s+i.amount,0);
   const totalExp = expenses.reduce((s,i)=>s+i.amount,0);
   const balance = totalInc - totalExp;
-  document.getElementById('total-income-val').innerText = totalInc.toFixed(2)+' €';
-  document.getElementById('total-expense-val').innerText = totalExp.toFixed(2)+' €';
-  const net = document.getElementById('net-balance-val');
-  net.innerText = balance.toFixed(2)+' €';
+  $('inc-total').innerText = 'Σύνολο ' + eur(totalInc);
+  $('exp-total').innerText = 'Σύνολο ' + eur(totalExp);
+  $('total-income-val').innerText = eur(totalInc);
+  $('total-expense-val').innerText = eur(totalExp);
+  const net = $('net-balance-val');
+  net.innerText = eur(balance);
   net.style.color = balance>=0 ? 'var(--green)' : 'var(--red)';
-  document.getElementById('home-balance').innerText = balance.toFixed(2)+' €';
+  $('home-balance').innerText = eur(balance);
 
   const cat = {};
   incomes.forEach(i=>cat[i.category]=(cat[i.category]||0)+i.amount);
   expenses.forEach(e=>cat[e.category]=(cat[e.category]||0)-e.amount);
   const keys = Object.keys(cat);
-  document.getElementById('category-breakdown').innerHTML = keys.length===0 ? '<div class="empty">Δεν υπάρχουν δεδομένα</div>' :
-    keys.map(c=>`<div class="item"><div class="ic"><span>${CAT_ICON[c]||'➕'}</span></div><div class="mid"><b>${c}</b></div><div class="amt" style="color:${cat[c]>=0?'var(--green)':'var(--red)'}">${cat[c].toFixed(2)} €</div></div>`).join('');
+  const max = Math.max(1, ...keys.map(k=>Math.abs(cat[k])));
+  $('category-breakdown').innerHTML = keys.length===0 ? '<div class="empty">Δεν υπάρχουν δεδομένα</div>' :
+    keys.map(c=>{const col = cat[c]>=0?'var(--green)':'var(--red)';
+      return `<div class="item"><div class="ic"><span>${CAT_ICON[c]||'➕'}</span></div><div class="mid"><b>${esc(c)}</b><div class="bar"><i style="width:${Math.abs(cat[c])/max*100}%;background:${col}"></i></div></div><div class="amt" style="color:${col}">${eur(cat[c])}</div></div>`;}).join('');
 }
 </script>
 </body>
